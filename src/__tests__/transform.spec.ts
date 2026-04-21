@@ -1,4 +1,3 @@
-import { Platform } from 'react-native';
 import { create } from '../';
 
 describe(`transform utilities`, () => {
@@ -243,10 +242,6 @@ describe(`transform utilities`, () => {
     });
 
     test(`translate w/percentage values`, () => {
-      Platform.OS = `web`;
-      jest.spyOn(Platform, `constants`, `get`).mockReturnValue(undefined as any);
-      tw = create();
-
       expect(tw.style(`translate-x-full`)).toMatchObject({
         transform: [{ translateX: `100%` }],
       });
@@ -271,61 +266,6 @@ describe(`transform utilities`, () => {
       expect(tw.style(`translate-y-1/5`)).toMatchObject({
         transform: [{ translateY: `20%` }],
       });
-
-      Platform.OS = `ios`;
-      jest.spyOn(Platform, `constants`, `get`).mockReturnValue({
-        ...Platform.constants,
-        reactNativeVersion: {
-          major: 0,
-          minor: 75,
-          patch: 0,
-        },
-      });
-      tw = create();
-
-      expect(tw.style(`translate-x-full`)).toMatchObject({
-        transform: [{ translateX: `100%` }],
-      });
-      expect(tw.style(`translate-y-full`)).toMatchObject({
-        transform: [{ translateY: `100%` }],
-      });
-      expect(tw.style(`translate-x-1/2`)).toMatchObject({
-        transform: [{ translateX: `50%` }],
-      });
-      expect(tw.style(`translate-y-1/2`)).toMatchObject({
-        transform: [{ translateY: `50%` }],
-      });
-      expect(tw.style(`translate-x-[10%]`)).toMatchObject({
-        transform: [{ translateX: `10%` }],
-      });
-      expect(tw.style(`translate-y-[10%]`)).toMatchObject({
-        transform: [{ translateY: `10%` }],
-      });
-      expect(tw.style(`translate-x-1/5`)).toMatchObject({
-        transform: [{ translateX: `20%` }],
-      });
-      expect(tw.style(`translate-y-1/5`)).toMatchObject({
-        transform: [{ translateY: `20%` }],
-      });
-
-      jest.spyOn(Platform, `constants`, `get`).mockReturnValue({
-        ...Platform.constants,
-        reactNativeVersion: {
-          major: 0,
-          minor: 74,
-          patch: 0,
-        },
-      });
-      tw = create();
-
-      expect(tw.style(`translate-x-full`)).toMatchObject({});
-      expect(tw.style(`translate-y-full`)).toMatchObject({});
-      expect(tw.style(`translate-x-1/2`)).toMatchObject({});
-      expect(tw.style(`translate-y-1/2`)).toMatchObject({});
-      expect(tw.style(`translate-x-[10%]`)).toMatchObject({});
-      expect(tw.style(`translate-y-[10%]`)).toMatchObject({});
-      expect(tw.style(`translate-x-1/5`)).toMatchObject({});
-      expect(tw.style(`translate-y-1/5`)).toMatchObject({});
     });
   });
 

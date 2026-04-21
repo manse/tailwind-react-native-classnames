@@ -82,7 +82,7 @@ export interface ParseContext {
   isNegative?: boolean;
   fractions?: boolean;
   device?: DeviceContext;
-  reactNativeVersion?: Version;
+
 }
 
 export type ColorStyleType =
@@ -235,10 +235,3 @@ export function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === `object`;
 }
 
-export type Version =
-  | {
-      major: number;
-      minor: number;
-      patch: number;
-    }
-  | undefined;

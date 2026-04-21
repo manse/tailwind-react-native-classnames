@@ -1,6 +1,6 @@
 import type { TwTheme } from '../tw-config';
 import type { DependentStyle, ParseContext, Style, StyleIR } from '../types';
-import { isString, Unit } from '../types';
+import { Unit } from '../types';
 import {
   complete,
   isArbitraryValue,
@@ -131,16 +131,7 @@ export function translate(
     ? parseStyleVal(configValue, context)
     : parseUnconfigged(value, context);
 
-  // using percentage values (non-numeric values) causes an error
-  // if used in versions earlier than RN 0.75
-  if (
-    styleVal === null ||
-    (isString(styleVal) &&
-      context.device?.platform !== `web` &&
-      (!context.reactNativeVersion ||
-        (context.reactNativeVersion.major === 0 &&
-          context.reactNativeVersion.minor < 75)))
-  ) {
+  if (styleVal === null) {
     return null;
   }
 

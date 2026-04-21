@@ -7,7 +7,7 @@ import { create } from '../';
 jest.mock(`react-native`, () => ({
   Platform: {
     OS: `ios`,
-    constants: { reactNativeVersion: { major: 0, minor: 75, patch: 0 } },
+    constants: {},
   },
 }));
 

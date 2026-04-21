@@ -8,7 +8,7 @@ import { create, useDeviceContext, useAppColorScheme } from '../';
 jest.mock(`react-native`, () => ({
   Platform: {
     OS: `ios`,
-    constants: { reactNativeVersion: { major: 0, minor: 75, patch: 0 } },
+    constants: {},
   },
   useColorScheme: () => `light`,
   useWindowDimensions: () => ({ width: 320, height: 640, fontScale: 1, scale: 2 }),

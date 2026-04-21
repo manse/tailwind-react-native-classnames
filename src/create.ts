@@ -9,7 +9,6 @@ import type {
   StyleIR,
   DeviceContext,
   Platform,
-  Version,
 } from './types';
 import { PREFIX_COLOR_PROP_MAP, type TwConfig } from './tw-config';
 import Cache from './cache';
@@ -28,7 +27,6 @@ const COLOR_PREFIX_BARE = /^(bg|text|border)-/;
 export function create(
   customConfig: TwConfig,
   platform: Platform,
-  reactNativeVersion: Version,
 ): TailwindFn {
   const config = resolveConfig(withContent(customConfig) as any) as TwConfig;
   const device: DeviceContext = {
@@ -118,7 +116,6 @@ export function create(
           config,
           cache,
           device,
-          reactNativeVersion,
         );
         styleIr = parser.parse();
       }
@@ -266,7 +263,6 @@ export function create(
       config,
       cache,
       device,
-      reactNativeVersion,
     );
     const ir = parser.parse();
     const prefixMatches = ir.kind !== `null`;
