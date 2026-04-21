@@ -24,8 +24,8 @@ const COLOR_PREFIX_BARE = /^(bg|text|border)-/;
 export function create(
   customConfig: TwConfig = {},
   device: DeviceContext = {
-    platform: Platform.OS
-  }
+    platform: Platform.OS,
+  },
 ): TailwindFn {
   const config = resolveConfig(withContent(customConfig) as any) as TwConfig;
   const customStyleUtils = getCustomFontUtils(customConfig, config);
@@ -86,12 +86,7 @@ export function create(
     for (const utility of utilities) {
       let styleIr = cache.getIr(utility);
       if (!styleIr) {
-        const parser = new UtilityParser(
-          utility,
-          config,
-          cache,
-          device,
-        );
+        const parser = new UtilityParser(utility, config, cache, device);
         styleIr = parser.parse();
       }
 

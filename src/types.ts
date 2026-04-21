@@ -48,7 +48,6 @@ export interface ParseContext {
   isNegative?: boolean;
   fractions?: boolean;
   device?: DeviceContext;
-
 }
 
 export type ColorStyleType =
@@ -200,4 +199,3 @@ export function isString(value: unknown): value is string {
 export function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === `object`;
 }
-

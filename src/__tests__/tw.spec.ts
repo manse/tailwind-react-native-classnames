@@ -34,7 +34,9 @@ describe(`tw`, () => {
   test(`media queries boundaries`, () => {
     // default breakpoints
     const utilities = `text-xs sm:text-lg md:text-xl lg:text-2xl xl:text-3xl`;
-    const dims = (w: number): { windowDimensions: { width: number; height: number } } => ({
+    const dims = (
+      w: number,
+    ): { windowDimensions: { width: number; height: number } } => ({
       windowDimensions: { width: w, height: 500 },
     });
     expect(create({}, dims(0)).style(utilities)).toMatchObject({ fontSize: 12 });
