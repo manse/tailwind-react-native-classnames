@@ -149,7 +149,7 @@ export function create(
     return resolved;
   }
 
-  function color(utils: string): string | undefined {
+  function color(utils: string): string {
     // Prefer prefix-specific colors within the theme config.
     // Only support theme objects which do not require a plugin. See:
     // https://v2.tailwindcss.com/docs/theme#configuration-reference
@@ -221,29 +221,11 @@ export function create(
       return styleObj?.[foundColorKey] as string;
     }
 
-    return undefined;
+    return `#808080`;
   }
 
   tailwindFn.style = style;
   tailwindFn.color = color;
-
-  tailwindFn.prefixMatch = (...prefixes: string[]) => {
-    const joined = prefixes.sort().join(`:`);
-    const cached = cache.getPrefixMatch(joined);
-    if (cached !== undefined) {
-      return cached;
-    }
-    const parser = new UtilityParser(
-      `${joined}:flex`,
-      config,
-      cache,
-      device,
-    );
-    const ir = parser.parse();
-    const prefixMatches = ir.kind !== `null`;
-    cache.setPrefixMatch(joined, prefixMatches);
-    return prefixMatches;
-  };
 
   return tailwindFn;
 }

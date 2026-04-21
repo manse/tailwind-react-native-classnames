@@ -3,8 +3,7 @@ import type { ViewStyle, TextStyle, ImageStyle } from 'react-native';
 export interface TailwindFn {
   (strings: TemplateStringsArray, ...values: (string | number)[]): Style;
   style: (...inputs: ClassInput[]) => Style;
-  color: (color: string) => string | undefined;
-  prefixMatch: (...prefixes: string[]) => boolean;
+  color: (color: string) => string;
 }
 
 export type ClassInput =
