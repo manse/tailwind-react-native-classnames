@@ -3,6 +3,12 @@ import type { TwColors } from '../tw-config';
 import { isObject, isString } from '../types';
 import { isArbitraryValue, warn } from '../helpers';
 
+const NAMED_COLOR = /^[a-z]{3,}$/;
+const RGB_PREFIX = /^rgb\(/;
+const HSL_PREFIX = /^hsl\(/;
+const TRAILING_PAREN = /\)$/;
+const OPACITY_VALUE = / ?\d*\.?(\d+)\)$/;
+
 export function color(
   type: ColorStyleType,
   value: string,
@@ -23,7 +29,7 @@ export function color(
   if (value.startsWith(`[#`) || value.startsWith(`[rgb`) || value.startsWith(`[hsl`)) {
     color = value.slice(1, -1);
     // arbitrary named colors: `bg-[lemonchiffon]`
-  } else if (isArbitraryValue(value) && value.slice(1, -1).match(/^[a-z]{3,}$/)) {
+  } else if (isArbitraryValue(value) && value.slice(1, -1).match(NAMED_COLOR)) {
     color = value.slice(1, -1);
   } else {
     color = configColor(value, config) ?? ``;
@@ -79,14 +85,14 @@ function addOpacity(color: string, opacity: number): string {
   if (color.startsWith(`#`)) {
     color = hexToRgba(color);
   } else if (color.startsWith(`rgb(`) || color.startsWith(`hsl(`)) {
-    color = color.replace(/^rgb\(/, `rgba(`).replace(/^hsl\(/, `hsla(`);
+    color = color.replace(RGB_PREFIX, `rgba(`).replace(HSL_PREFIX, `hsla(`);
     if (color.includes(`,`)) {
-      color = color.replace(/\)$/, `, 1)`);
+      color = color.replace(TRAILING_PAREN, `, 1)`);
     } else {
-      color = color.replace(/\)$/, ` / 1)`);
+      color = color.replace(TRAILING_PAREN, ` / 1)`);
     }
   }
-  return color.replace(/ ?\d*\.?(\d+)\)$/, ` ${opacity})`);
+  return color.replace(OPACITY_VALUE, ` ${opacity})`);
 }
 
 export function removeOpacityHelpers(style: Style): void {

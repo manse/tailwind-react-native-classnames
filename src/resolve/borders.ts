@@ -8,15 +8,18 @@ import {
 } from '../helpers';
 import { color } from './color';
 
+const LEADING_DASH = /^-/;
+const OPTIONAL_NUM = /^(-?(\d)+)?$/;
+
 export function border(value: string, theme?: TwTheme): StyleIR | null {
   let [rest, direction] = parseAndConsumeDirection(value);
   const config = theme?.borderWidth;
-  const key = rest.replace(/^-/, ``);
-  if (config && (config[key] !== undefined || key.match(/^(-?(\d)+)?$/))) {
+  const key = rest.replace(LEADING_DASH, ``);
+  if (config && (config[key] !== undefined || key.match(OPTIONAL_NUM))) {
     return borderWidth(key, direction, config);
   }
 
-  rest = rest.replace(/^-/, ``);
+  rest = rest.replace(LEADING_DASH, ``);
   if ([`dashed`, `solid`, `dotted`].includes(rest)) {
     return complete({ borderStyle: rest });
   }
@@ -45,7 +48,7 @@ export function border(value: string, theme?: TwTheme): StyleIR | null {
   // Finally Handling Arbitrary Width Case
   // border-[20px] or border-[2.5rem]
   const prop = `border${direction === `All` ? `` : direction}Width`;
-  rest = rest.replace(/^-/, ``);
+  rest = rest.replace(LEADING_DASH, ``);
   const numericValue = rest.slice(1, -1);
   const arbitraryWidth = unconfiggedStyle(prop, numericValue);
   // can't use % for border-radius in RN
@@ -64,7 +67,7 @@ function borderWidth(
     return null;
   }
 
-  value = value.replace(/^-/, ``);
+  value = value.replace(LEADING_DASH, ``);
   const key = value === `` ? `DEFAULT` : value;
   const configValue = config[key];
   if (configValue === undefined) {
@@ -84,7 +87,7 @@ export function borderRadius(
   }
 
   let [rest, direction] = parseAndConsumeDirection(value);
-  rest = rest.replace(/^-/, ``);
+  rest = rest.replace(LEADING_DASH, ``);
   if (rest === ``) {
     rest = `DEFAULT`;
   }

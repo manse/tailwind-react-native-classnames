@@ -10,6 +10,8 @@ import {
   toStyleVal,
 } from '../helpers';
 
+const XY_AXIS_PREFIX = /^(x|y)-/;
+const XYZ_AXIS_PREFIX = /^(x|y|z)-/;
 const originPositions = [`left`, `center`, `right`, `top`, `bottom`];
 
 type Axis = `x` | `y` | `z` | ``;
@@ -23,7 +25,7 @@ export function scale(
 ): StyleIR | null {
   let scaleAxis: Axis = ``;
 
-  value = value.replace(/^(x|y)-/, (_, axis) => {
+  value = value.replace(XY_AXIS_PREFIX, (_, axis) => {
     scaleAxis = axis.toUpperCase();
     return ``;
   });
@@ -54,7 +56,7 @@ export function rotate(
 ): StyleIR | null {
   let rotateAxis: Axis = ``;
 
-  value = value.replace(/^(x|y|z)-/, (_, axis) => {
+  value = value.replace(XYZ_AXIS_PREFIX, (_, axis) => {
     rotateAxis = axis.toUpperCase();
     return ``;
   });
@@ -82,7 +84,7 @@ export function skew(
 ): StyleIR | null {
   let skewAxis: Axis = ``;
 
-  value = value.replace(/^(x|y)-/, (_, axis) => {
+  value = value.replace(XY_AXIS_PREFIX, (_, axis) => {
     skewAxis = axis.toUpperCase();
     return ``;
   });
@@ -114,7 +116,7 @@ export function translate(
 ): StyleIR | null {
   let translateAxis: Axis = ``;
 
-  value = value.replace(/^(x|y)-/, (_, axis) => {
+  value = value.replace(XY_AXIS_PREFIX, (_, axis) => {
     translateAxis = axis.toUpperCase();
     return ``;
   });

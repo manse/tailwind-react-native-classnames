@@ -8,12 +8,19 @@ import {
   isArbitraryValue,
 } from '../helpers';
 
+const LEADING_DASH = /^-/;
+const SINGLE_NUMBER = /^\d+(\.\d+)?$/;
+const TWO_INTEGERS = /^(\d+)\s+(\d+)$/;
+const GROW_BASIS = /^(\d+)\s+([^ ]+)$/;
+const THREE_VALUES = /^(\d+)\s+(\d+)\s+(.+)$/;
+const GAP_DIR = /^-(x|y)-/;
+
 export function flexGrowShrink(
   type: 'Grow' | 'Shrink',
   value: string,
   config?: TwTheme['flexGrow'] | TwTheme['flexShrink'],
 ): StyleIR | null {
-  value = value.replace(/^-/, ``);
+  value = value.replace(LEADING_DASH, ``);
   if (isArbitraryValue(value)) {
     value = value.slice(1, -1);
   }
@@ -34,7 +41,7 @@ export function flex(value: string, config?: TwTheme['flex']): StyleIR | null {
 
   // @see https://developer.mozilla.org/en-US/docs/Web/CSS/flex
   // MDN: One value, unitless number: flex-grow flex-basis is then equal to 0.
-  if (value.match(/^\d+(\.\d+)?$/)) {
+  if (value.match(SINGLE_NUMBER)) {
     return complete({
       flexGrow: Number(value),
       flexBasis: `0%`,
@@ -42,7 +49,7 @@ export function flex(value: string, config?: TwTheme['flex']): StyleIR | null {
   }
 
   // MDN: Two values (both integers): flex-grow | flex-basis
-  let match = value.match(/^(\d+)\s+(\d+)$/);
+  let match = value.match(TWO_INTEGERS);
   if (match) {
     return complete({
       flexGrow: Number(match[1]),
@@ -51,7 +58,7 @@ export function flex(value: string, config?: TwTheme['flex']): StyleIR | null {
   }
 
   // MDN: Two values: flex-grow | flex-basis
-  match = value.match(/^(\d+)\s+([^ ]+)$/);
+  match = value.match(GROW_BASIS);
   if (match) {
     const flexBasis = parseStyleVal(match[2] ?? ``);
     if (!flexBasis) {
@@ -64,7 +71,7 @@ export function flex(value: string, config?: TwTheme['flex']): StyleIR | null {
   }
 
   // MDN: Three values: flex-grow | flex-shrink | flex-basis
-  match = value.match(/^(\d+)\s+(\d+)\s+(.+)$/);
+  match = value.match(THREE_VALUES);
   if (match) {
     const flexBasis = parseStyleVal(match[3] ?? ``);
     if (!flexBasis) {
@@ -85,7 +92,7 @@ export function flexBasis(
   context: ParseContext = {},
   config?: TwTheme['flexBasis'],
 ): StyleIR | null {
-  value = value.replace(/^-/, ``);
+  value = value.replace(LEADING_DASH, ``);
   const configValue = config?.[value];
 
   if (configValue !== undefined) {
@@ -102,7 +109,7 @@ export function gap(
 ): StyleIR | null {
   let gapStyle = `gap`;
 
-  value = value.replace(/^-(x|y)-/, (_, dir) => {
+  value = value.replace(GAP_DIR, (_, dir) => {
     if (dir === `x`) {
       gapStyle = `columnGap`;
     }
@@ -112,7 +119,7 @@ export function gap(
     return ``;
   });
 
-  value = value.replace(/^-/, ``);
+  value = value.replace(LEADING_DASH, ``);
 
   const configValue = config === null || config === void 0 ? void 0 : config[value];
   if (configValue !== undefined) {

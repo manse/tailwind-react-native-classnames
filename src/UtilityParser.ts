@@ -38,6 +38,10 @@ import {
   filterSepia,
 } from './resolve/filter';
 
+const DIRECTION_PREFIX = /^(t|b|r|l|x|y)?-/;
+const DIRECTION_CHAR = /^[tbrlxy]$/;
+const ARBITRARY_BREAKPOINT = /^(min|max)-(w|h)-\[([^\]]+)\]$/;
+
 export default class UtilityParser {
   private position = 0;
   private string: string;
@@ -103,7 +107,7 @@ export default class UtilityParser {
       case `m`:
       case `p`: {
         const prop = this.char === `m` ? `margin` : `padding`;
-        const match = this.peekSlice(1, 3).match(/^(t|b|r|l|x|y)?-/);
+        const match = this.peekSlice(1, 3).match(DIRECTION_PREFIX);
         if (match) {
           this.advance((match[0]?.length ?? 0) + 1);
           const spacingDirection = h.getDirection(match[1]);
@@ -117,7 +121,7 @@ export default class UtilityParser {
           if (style) return style;
         }
         // handle bare `p`, `m`, `pt`, `mx`, etc. for DEFAULT spacing values
-        const dirMatch = this.peekSlice(1, 2).match(/^[tbrlxy]$/);
+        const dirMatch = this.peekSlice(1, 2).match(DIRECTION_CHAR);
         const afterDir = this.peekSlice(dirMatch ? 2 : 1, dirMatch ? 3 : 2);
         if (afterDir === `` || afterDir === undefined) {
           const savedPos = this.position;
@@ -458,7 +462,7 @@ export default class UtilityParser {
     // save the expense of running the regex with a quick sniff test
     if (prefix[0] !== `m`) return false;
 
-    const match = prefix.match(/^(min|max)-(w|h)-\[([^\]]+)\]$/);
+    const match = prefix.match(ARBITRARY_BREAKPOINT);
     if (!match) return false;
 
     if (!this.context.device?.windowDimensions) {

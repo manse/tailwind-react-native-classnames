@@ -1,6 +1,9 @@
 import type { Style, Direction, CompleteStyle, ParseContext } from './types';
 import { Unit } from './types';
 
+const UNIT_SUFFIX = /(([a-z]{2,}|%))$/;
+const DIRECTION_SUFFIX = /^-(t|b|r|l|tr|tl|br|bl)(-|$)/;
+
 export function complete(style: Style): CompleteStyle {
   return { kind: `complete`, style };
 }
@@ -25,7 +28,7 @@ export function parseNumericValue(
     return null;
   }
 
-  const match = value.match(/(([a-z]{2,}|%))$/);
+  const match = value.match(UNIT_SUFFIX);
   if (!match) {
     return [number, Unit.none];
   }
@@ -163,7 +166,7 @@ export function getDirection(string?: string): Direction {
 
 export function parseAndConsumeDirection(utilityFragment: string): [string, Direction] {
   let direction: Direction = `All`;
-  const consumed = utilityFragment.replace(/^-(t|b|r|l|tr|tl|br|bl)(-|$)/, (_, dir) => {
+  const consumed = utilityFragment.replace(DIRECTION_SUFFIX, (_, dir) => {
     direction = getDirection(dir);
     return ``;
   });

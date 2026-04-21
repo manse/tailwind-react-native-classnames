@@ -19,6 +19,12 @@ import { parseInputs } from './parse-inputs';
 import { complete, warn } from './helpers';
 import { getAddedUtilities } from './plugin';
 
+const LEADING_DOT = /^\./;
+const WHITESPACE_TEST = /\s+/;
+const COLOR_PREFIX = /^(bg-|text-|border-)/;
+const WHITESPACE_SPLIT = /\s+/g;
+const COLOR_PREFIX_BARE = /^(bg|text|border)-/;
+
 export function create(
   customConfig: TwConfig,
   platform: Platform,
@@ -33,7 +39,7 @@ export function create(
   const customStringUtils: Record<string, string> = {};
   const customStyleUtils = Object.entries(pluginUtils)
     .map(([rawUtil, style]): [string, StyleIR] => {
-      const util = rawUtil.replace(/^\./, ``);
+      const util = rawUtil.replace(LEADING_DOT, ``);
       if (typeof style === `string`) {
         // sacrifice functional purity to only iterate once
         customStringUtils[util] = style;
@@ -207,7 +213,7 @@ export function create(
       }
 
       // Check `colors` if `utils` is not a computed value (e.g. `secondary opacity-50` or `white/25`)
-      if (!/\s+/.test(utils) && !utils.includes(`/`) && config.theme.colors) {
+      if (!WHITESPACE_TEST.test(utils) && !utils.includes(`/`) && config.theme.colors) {
         color = configColor(utils, config.theme.colors);
 
         if (color) {
@@ -219,10 +225,10 @@ export function create(
     // Fall back to attempting style parsing
     let toStyle = utils;
 
-    if (!/^(bg-|text-|border-)/.test(utils)) {
+    if (!COLOR_PREFIX.test(utils)) {
       toStyle = utils
-        .split(/\s+/g)
-        .map((util) => util.replace(/^(bg|text|border)-/, ``))
+        .split(WHITESPACE_SPLIT)
+        .map((util) => util.replace(COLOR_PREFIX_BARE, ``))
         .map((util) => `bg-${util}`)
         .join(` `);
     }

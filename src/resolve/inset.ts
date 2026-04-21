@@ -3,6 +3,8 @@ import type { StyleIR } from '../types';
 import { complete, parseStyleVal, parseUnconfigged } from '../helpers';
 
 type Inset = 'bottom' | 'top' | 'left' | 'right' | 'inset';
+const AXIS_PREFIX = /^(x|y)-/;
+
 type InsetDir = null | 'x' | 'y';
 
 export function inset(
@@ -13,7 +15,7 @@ export function inset(
 ): StyleIR | null {
   let insetDir: InsetDir = null;
   if (type === `inset`) {
-    value = value.replace(/^(x|y)-/, (_, dir) => {
+    value = value.replace(AXIS_PREFIX, (_, dir) => {
       insetDir = dir === `x` ? `x` : `y`;
       return ``;
     });

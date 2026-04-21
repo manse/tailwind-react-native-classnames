@@ -27,8 +27,10 @@ export function parseInputs(
   return [classNames.filter(Boolean).filter(unique), styles];
 }
 
+const WHITESPACE = /\s+/;
+
 function split(str: string): string[] {
-  return str.trim().split(/\s+/);
+  return str.trim().split(WHITESPACE);
 }
 
 function unique(className: string, index: number, classes: string[]): boolean {
