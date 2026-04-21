@@ -114,3 +114,39 @@ describe(`custom borderWidth`, () => {
     expect(tw.style(`border-foo`)).toEqual({ borderWidth: 48 });
   });
 });
+
+describe(`custom borderRadius DEFAULT`, () => {
+  test(`custom borderRadius DEFAULT from theme.extend`, () => {
+    const tw = create({
+      theme: {
+        extend: {
+          borderRadius: {
+            DEFAULT: `20px`,
+          },
+        },
+      },
+    });
+    // bare `rounded` should use the custom DEFAULT
+    expect(tw`rounded`).toEqual({ borderRadius: 20 });
+    expect(tw.style(`rounded`)).toEqual({ borderRadius: 20 });
+    // directional variants
+    expect(tw`rounded-t`).toEqual({
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+    });
+    expect(tw`rounded-b`).toEqual({
+      borderBottomLeftRadius: 20,
+      borderBottomRightRadius: 20,
+    });
+    expect(tw`rounded-l`).toEqual({
+      borderTopLeftRadius: 20,
+      borderBottomLeftRadius: 20,
+    });
+    expect(tw`rounded-r`).toEqual({
+      borderTopRightRadius: 20,
+      borderBottomRightRadius: 20,
+    });
+    // explicit values should still work
+    expect(tw`rounded-lg`).toEqual({ borderRadius: 8 });
+  });
+});
