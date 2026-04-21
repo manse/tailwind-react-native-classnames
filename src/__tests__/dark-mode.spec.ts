@@ -7,13 +7,13 @@ describe(`dark mode`, () => {
 
   test(`dark mode`, () => {
     expect(tw`mt-1 dark:mt-2`).toEqual({ marginTop: 4 });
-    tw.setColorScheme(`dark`);
+    tw = create({}, { colorScheme: `dark` });
     expect(tw`mt-1 dark:mt-2`).toEqual({ marginTop: 8 });
-    tw.setColorScheme(`light`);
+    tw = create({}, { colorScheme: `light` });
     expect(tw`mt-1 dark:mt-2`).toEqual({ marginTop: 4 });
-    tw.setColorScheme(undefined);
+    tw = create({}, { colorScheme: undefined });
     expect(tw`mt-1 dark:mt-2`).toEqual({ marginTop: 4 });
-    tw.setColorScheme(`dark`);
+    tw = create({}, { colorScheme: `dark` });
     // out of order
     expect(tw`dark:mt-2 mt-1`).toEqual({ marginTop: 8 });
   });
@@ -23,7 +23,7 @@ describe(`dark mode`, () => {
       backgroundColor: `rgba(243, 244, 246, 0.5)`,
     });
 
-    tw.setColorScheme(`dark`);
+    tw = create({}, { colorScheme: `dark` });
 
     expect(tw`bg-gray-100 dark:bg-gray-800 bg-opacity-50`).toEqual({
       backgroundColor: `rgba(31, 41, 55, 0.5)`,
@@ -49,7 +49,7 @@ describe(`dark mode`, () => {
       backgroundColor: `rgba(255, 255, 255, 0.5)`,
     });
 
-    tw.setColorScheme(`dark`);
+    tw = create({}, { colorScheme: `dark` });
 
     expect(tw`bg-gray-100/50 dark:bg-gray-800/50`).toEqual({
       backgroundColor: `rgba(31, 41, 55, 0.5)`,

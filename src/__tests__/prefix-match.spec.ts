@@ -1,4 +1,3 @@
-import rn from 'react-native';
 import { describe, test, expect } from '@jest/globals';
 import { create } from '../';
 
@@ -20,18 +19,15 @@ describe(`tw.prefixMatch()`, () => {
   });
 
   test(`platform prefixes`, () => {
-    rn.Platform.OS = `ios`;
-    tw = create();
+    tw = create({}, { platform: `ios` });
     expect(tw.prefixMatch(`ios`)).toBe(true);
     expect(tw.prefixMatch(`android`)).toBe(false);
-    rn.Platform.OS = `android`;
-    tw = create();
+    tw = create({}, { platform: `android` });
     expect(tw.prefixMatch(`ios`)).toBe(false);
     expect(tw.prefixMatch(`android`)).toBe(true);
     expect(tw`web:self-center`).toEqual({});
     expect(tw`not-valid-util`).toEqual({});
-    rn.Platform.OS = `web`;
-    tw = create();
+    tw = create({}, { platform: `web` });
     expect(tw.prefixMatch(`ios`)).toBe(false);
     expect(tw.prefixMatch(`android`)).toBe(false);
     expect(tw.prefixMatch(`web`)).toBe(true);
@@ -39,8 +35,10 @@ describe(`tw.prefixMatch()`, () => {
   });
 
   test(`breakpoint prefixes`, () => {
-    tw = create({ theme: { screens: { md: `600px`, lg: `800px`, xl: `1000px` } } });
-    tw.setWindowDimensions({ width: 801, height: 600 });
+    tw = create(
+      { theme: { screens: { md: `600px`, lg: `800px`, xl: `1000px` } } },
+      { windowDimensions: { width: 801, height: 600 } },
+    );
     expect(tw.prefixMatch(`md`)).toBe(true);
     expect(tw.prefixMatch(`lg`)).toBe(true);
     expect(tw.prefixMatch(`xl`)).toBe(false);
@@ -49,7 +47,7 @@ describe(`tw.prefixMatch()`, () => {
   });
 
   test(`arbitrary breakpoint prefixes`, () => {
-    tw.setWindowDimensions({ width: 800, height: 600 });
+    tw = create({}, { windowDimensions: { width: 800, height: 600 } });
     expect(tw.prefixMatch(`min-h-[500px]`)).toBe(true);
     expect(tw.prefixMatch(`max-h-[500px]`)).toBe(false);
     expect(tw.prefixMatch(`min-w-[500px]`)).toBe(true);
@@ -57,9 +55,7 @@ describe(`tw.prefixMatch()`, () => {
   });
 
   test(`multiple prefixes`, () => {
-    rn.Platform.OS = `ios`;
-    tw = create();
-    tw.setWindowDimensions({ width: 800, height: 600 });
+    tw = create({}, { platform: `ios`, windowDimensions: { width: 800, height: 600 } });
     expect(tw.prefixMatch(`min-w-[500px]`, `max-w-[600px]`)).toBe(false);
     expect(tw.prefixMatch(`min-w-[500px]`, `max-w-[900px]`)).toBe(true);
     expect(tw.prefixMatch(`min-w-[500px]`, `ios`)).toBe(true);
@@ -67,9 +63,9 @@ describe(`tw.prefixMatch()`, () => {
   });
 
   test(`retina prefix`, () => {
-    tw.setPixelDensity(1);
+    tw = create({}, { pixelDensity: 1 });
     expect(tw.prefixMatch(`retina`)).toBe(false);
-    tw.setPixelDensity(2);
+    tw = create({}, { pixelDensity: 2 });
     expect(tw.prefixMatch(`retina`)).toBe(true);
   });
 });

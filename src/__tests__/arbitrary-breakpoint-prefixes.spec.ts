@@ -1,12 +1,7 @@
-import { describe, beforeEach, test, expect } from '@jest/globals';
+import { describe, test, expect } from '@jest/globals';
 import { create } from '../';
 
 describe(`arbitrary breakpoint prefixes`, () => {
-  let tw = create();
-  beforeEach(() => {
-    tw = create();
-  });
-
   const cases: Array<
     [
       dims: { width: number; height: number } | null,
@@ -25,9 +20,7 @@ describe(`arbitrary breakpoint prefixes`, () => {
   ];
 
   test.each(cases)(`tw\`%s\` -> %s`, (dims, utility, expected) => {
-    if (dims) {
-      tw.setWindowDimensions(dims);
-    }
-    expect(tw.style(utility)).toEqual(expected);
+    const t = dims ? create({}, { windowDimensions: dims }) : create();
+    expect(t.style(utility)).toEqual(expected);
   });
 });

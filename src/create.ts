@@ -1,14 +1,13 @@
 import resolveConfig from 'tailwindcss/resolveConfig';
+import { Platform } from 'react-native';
 import type {
   ClassInput,
   DependentStyle,
   Style,
   TailwindFn,
-  RnColorScheme,
   OrderedStyle,
   StyleIR,
   DeviceContext,
-  Platform,
 } from './types';
 import { PREFIX_COLOR_PROP_MAP, type TwConfig } from './tw-config';
 import Cache from './cache';
@@ -16,38 +15,20 @@ import UtilityParser from './UtilityParser';
 import { configColor, removeOpacityHelpers } from './resolve/color';
 import { parseInputs } from './parse-inputs';
 import { complete, warn } from './helpers';
-import { getAddedUtilities } from './plugin';
 
-const LEADING_DOT = /^\./;
 const WHITESPACE_TEST = /\s+/;
 const COLOR_PREFIX = /^(bg-|text-|border-)/;
 const WHITESPACE_SPLIT = /\s+/g;
 const COLOR_PREFIX_BARE = /^(bg|text|border)-/;
 
 export function create(
-  customConfig: TwConfig,
-  platform: Platform,
+  customConfig: TwConfig = {},
+  device: DeviceContext = {
+    platform: Platform.OS
+  }
 ): TailwindFn {
   const config = resolveConfig(withContent(customConfig) as any) as TwConfig;
-  const device: DeviceContext = {
-    platform,
-  };
-
-  const pluginUtils = getAddedUtilities(config.plugins);
-  const customStringUtils: Record<string, string> = {};
-  const customStyleUtils = Object.entries(pluginUtils)
-    .map(([rawUtil, style]): [string, StyleIR] => {
-      const util = rawUtil.replace(LEADING_DOT, ``);
-      if (typeof style === `string`) {
-        // sacrifice functional purity to only iterate once
-        customStringUtils[util] = style;
-        return [util, { kind: `null` }];
-      }
-      return [util, complete(style)];
-    })
-    .filter(([, ir]) => ir.kind !== `null`);
-
-  patchCustomFontUtils(customConfig, customStyleUtils, config);
+  const customStyleUtils = getCustomFontUtils(customConfig, config);
 
   function deriveCacheGroup(): string {
     return (
@@ -85,10 +66,6 @@ export function create(
     }
     const newCache = new Cache(customStyleUtils);
     contextCaches[cacheGroup] = newCache;
-    // set custom string utils into cache, so they are resolvable at all breakpoints
-    for (const [key, value] of Object.entries(customStringUtils)) {
-      newCache.setIr(key, complete(style(value)));
-    }
     cache = newCache;
   }
 
@@ -268,43 +245,6 @@ export function create(
     return prefixMatches;
   };
 
-  tailwindFn.setWindowDimensions = (newDimensions: { width: number; height: number }) => {
-    device.windowDimensions = newDimensions;
-    configureCache();
-  };
-
-  tailwindFn.setFontScale = (newFontScale: number) => {
-    device.fontScale = newFontScale;
-    configureCache();
-  };
-
-  tailwindFn.setPixelDensity = (newPixelDensity: 1 | 2) => {
-    device.pixelDensity = newPixelDensity;
-    configureCache();
-  };
-
-  tailwindFn.setColorScheme = (newColorScheme: RnColorScheme) => {
-    device.colorScheme = newColorScheme;
-    configureCache();
-  };
-
-  tailwindFn.getColorScheme = () => device.colorScheme;
-
-  tailwindFn.updateDeviceContext = (
-    window: { width: number; height: number },
-    fontScale: number,
-    pixelDensity: 1 | 2,
-    colorScheme: RnColorScheme | 'skip',
-  ) => {
-    device.windowDimensions = window;
-    device.fontScale = fontScale;
-    device.pixelDensity = pixelDensity;
-    if (colorScheme !== `skip`) {
-      device.colorScheme = colorScheme;
-    }
-    configureCache();
-  };
-
   return tailwindFn;
 }
 
@@ -323,11 +263,12 @@ function withContent(config: TwConfig): TwConfig & { content: string[] } {
 // Allow override default font-<name> style
 // @TODO: long-term, i'd like to think of a more generic way to allow
 // custom configurations not to get masked by default utilities...
-function patchCustomFontUtils(
+function getCustomFontUtils(
   customConfig: TwConfig,
-  customStyleUtils: Array<[string, StyleIR]>,
   config: TwConfig,
-): void {
+): Array<[string, StyleIR]> {
+  const customStyleUtils: Array<[string, StyleIR]> = [];
+
   if (customConfig.theme?.fontWeight || customConfig.theme?.extend?.fontWeight) {
     [
       ...Object.entries(customConfig.theme?.fontWeight ?? {}),
@@ -347,4 +288,5 @@ function patchCustomFontUtils(
       }
     });
   }
+  return customStyleUtils;
 }

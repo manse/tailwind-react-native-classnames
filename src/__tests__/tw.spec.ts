@@ -1,4 +1,3 @@
-import rn from 'react-native';
 import { describe, test, expect } from '@jest/globals';
 import type { ViewStyle } from 'react-native';
 import type { TwConfig } from '../tw-config';
@@ -26,48 +25,39 @@ describe(`tw`, () => {
 
   test(`media queries`, () => {
     const config: TwConfig = { theme: { screens: { md: `768px` } } };
-    tw = create(config);
-    tw.setWindowDimensions({ width: 500, height: 500 });
+    tw = create(config, { windowDimensions: { width: 500, height: 500 } });
     expect(tw`md:text-lg text-xs`).toMatchObject({ fontSize: 12 });
-    tw.setWindowDimensions({ width: 800, height: 500 });
+    tw = create(config, { windowDimensions: { width: 800, height: 500 } });
     expect(tw`md:text-lg text-xs`).toMatchObject({ fontSize: 18 });
   });
 
   test(`media queries boundaries`, () => {
-    tw = create();
     // default breakpoints
     const utilities = `text-xs sm:text-lg md:text-xl lg:text-2xl xl:text-3xl`;
-    expect(tw.style(utilities)).toMatchObject({ fontSize: 12 });
-    tw.setWindowDimensions({ width: 500, height: 500 });
-    expect(tw.style(utilities)).toMatchObject({ fontSize: 12 });
-    tw.setWindowDimensions({ width: 639, height: 500 });
-    expect(tw.style(utilities)).toMatchObject({ fontSize: 12 });
-    tw.setWindowDimensions({ width: 640, height: 500 });
-    expect(tw.style(utilities)).toMatchObject({ fontSize: 18 });
-    tw.setWindowDimensions({ width: 767, height: 500 });
-    expect(tw.style(utilities)).toMatchObject({ fontSize: 18 });
-    tw.setWindowDimensions({ width: 768, height: 500 });
-    expect(tw.style(utilities)).toMatchObject({ fontSize: 20 });
-    tw.setWindowDimensions({ width: 1023, height: 500 });
-    expect(tw.style(utilities)).toMatchObject({ fontSize: 20 });
-    tw.setWindowDimensions({ width: 1024, height: 500 });
-    expect(tw.style(utilities)).toMatchObject({ fontSize: 24 });
-    tw.setWindowDimensions({ width: 1279, height: 500 });
-    expect(tw.style(utilities)).toMatchObject({ fontSize: 24 });
-    tw.setWindowDimensions({ width: 1280, height: 500 });
-    expect(tw.style(utilities)).toMatchObject({ fontSize: 30 });
+    const dims = (w: number): { windowDimensions: { width: number; height: number } } => ({
+      windowDimensions: { width: w, height: 500 },
+    });
+    expect(create({}, dims(0)).style(utilities)).toMatchObject({ fontSize: 12 });
+    expect(create({}, dims(500)).style(utilities)).toMatchObject({ fontSize: 12 });
+    expect(create({}, dims(639)).style(utilities)).toMatchObject({ fontSize: 12 });
+    expect(create({}, dims(640)).style(utilities)).toMatchObject({ fontSize: 18 });
+    expect(create({}, dims(767)).style(utilities)).toMatchObject({ fontSize: 18 });
+    expect(create({}, dims(768)).style(utilities)).toMatchObject({ fontSize: 20 });
+    expect(create({}, dims(1023)).style(utilities)).toMatchObject({ fontSize: 20 });
+    expect(create({}, dims(1024)).style(utilities)).toMatchObject({ fontSize: 24 });
+    expect(create({}, dims(1279)).style(utilities)).toMatchObject({ fontSize: 24 });
+    expect(create({}, dims(1280)).style(utilities)).toMatchObject({ fontSize: 30 });
     // custom breakpoints
-    tw = create({ theme: { screens: { custom: `555px` } } });
-    tw.setWindowDimensions({ width: 554, height: 500 });
+    const customConfig = { theme: { screens: { custom: `555px` } } };
+    tw = create(customConfig, dims(554));
     expect(tw`text-xs custom:text-lg`).toMatchObject({ fontSize: 12 });
-    tw.setWindowDimensions({ width: 555, height: 500 });
+    tw = create(customConfig, dims(555));
     expect(tw`text-xs custom:text-lg`).toMatchObject({ fontSize: 18 });
   });
 
   test(`multiple media queries`, () => {
     const config: TwConfig = { theme: { screens: { sm: `640px`, md: `768px` } } };
-    tw = create(config);
-    tw.setWindowDimensions({ width: 800, height: 0 });
+    tw = create(config, { windowDimensions: { width: 800, height: 0 } });
     expect(tw`text-xs sm:text-md md:text-lg`).toMatchObject({ fontSize: 18 });
     // out of order
     expect(tw`md:text-lg sm:text-base text-xs`).toMatchObject({ fontSize: 18 });
@@ -77,8 +67,7 @@ describe(`tw`, () => {
 
   test(`media queries + dependent style`, () => {
     const config: TwConfig = { theme: { screens: { md: `768px` } } };
-    tw = create(config);
-    tw.setWindowDimensions({ width: 800, height: 0 });
+    tw = create(config, { windowDimensions: { width: 800, height: 0 } });
     expect(tw`text-xs leading-none md:leading-tight`).toEqual({
       fontSize: 12,
       lineHeight: 15,
@@ -86,14 +75,12 @@ describe(`tw`, () => {
   });
 
   test(`orientation utilities`, () => {
-    tw = create();
-    tw.setWindowDimensions({ width: 600, height: 800 });
+    tw = create({}, { windowDimensions: { width: 600, height: 800 } });
     expect(tw`mt-0 landscape:mt-1`).toEqual({ marginTop: 0 });
     expect(tw`landscape:mt-1 mt-0`).toEqual({ marginTop: 0 });
     expect(tw`landscape:mt-1 mt-0 portrait:mt-2`).toEqual({ marginTop: 8 });
     expect(tw`mt-0 portrait:mt-2 landscape:mt-1`).toEqual({ marginTop: 8 });
-    tw = create();
-    tw.setWindowDimensions({ width: 800, height: 600 });
+    tw = create({}, { windowDimensions: { width: 800, height: 600 } });
     expect(tw`mt-0 landscape:mt-1`).toEqual({ marginTop: 4 });
     expect(tw`landscape:mt-1 mt-0`).toEqual({ marginTop: 4 });
     tw = create();
@@ -102,11 +89,12 @@ describe(`tw`, () => {
   });
 
   test(`multiple prefixes`, () => {
-    rn.Platform.OS = `android`;
     const config: TwConfig = { theme: { screens: { md: `768px` } } };
-    tw = create(config);
-    tw.setWindowDimensions({ width: 800, height: 0 });
-    tw.setColorScheme(`dark`);
+    tw = create(config, {
+      platform: `android`,
+      windowDimensions: { width: 800, height: 0 },
+      colorScheme: `dark`,
+    });
     expect(
       tw`android:md:text-xs android:text-2xl ios:text-lg android:dark:mt-2 mt-1`,
     ).toMatchObject({
@@ -116,11 +104,9 @@ describe(`tw`, () => {
   });
 
   test(`platform-matching`, () => {
-    rn.Platform.OS = `ios`;
-    tw = create();
+    tw = create({}, { platform: `ios` });
     expect(tw`android:text-lg ios:text-xs`).toMatchObject({ fontSize: 12 });
-    rn.Platform.OS = `android`;
-    tw = create();
+    tw = create({}, { platform: `android` });
     expect(tw`android:text-lg ios:text-xs`).toMatchObject({ fontSize: 18 });
   });
 
@@ -296,8 +282,7 @@ describe(`tw`, () => {
   });
 
   test(`mapped style after platform prefix works`, () => {
-    rn.Platform.OS = `ios`;
-    tw = create();
+    tw = create({}, { platform: `ios` });
     expect(tw`ios:hidden`).toEqual({ display: `none` });
   });
 
@@ -319,10 +304,10 @@ describe(`tw`, () => {
   test(`retina prefix`, () => {
     expect(tw`w-1 retina:w-2`.width).toBe(4);
     expect(tw`retina:w-2 w-1`.width).toBe(4);
-    tw.setPixelDensity(1);
+    tw = create({}, { pixelDensity: 1 });
     expect(tw`w-1 retina:w-2`.width).toBe(4);
     expect(tw`retina:w-2 w-1`.width).toBe(4);
-    tw.setPixelDensity(2);
+    tw = create({}, { pixelDensity: 2 });
     expect(tw`w-1 retina:w-2`.width).toBe(8);
     expect(tw`retina:w-2 w-1`.width).toBe(8);
   });
@@ -372,8 +357,8 @@ describe(`tw`, () => {
   });
 
   test(`ir caching between breakpoints`, () => {
-    const tw = create(); // one creation, reused so cache is shared
-    tw.setWindowDimensions({ width: 1100, height: 600 }); // breakpoint=lg
+    // one creation, reused so cache is shared
+    const tw = create({}, { windowDimensions: { width: 1100, height: 600 } }); // breakpoint=lg
 
     expect(tw.style(`w-3`)).toEqual({ width: 12 });
     expect(tw.style(`w-1 lg:w-3`)).toEqual({ width: 12 });

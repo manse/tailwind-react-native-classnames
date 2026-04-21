@@ -2,10 +2,9 @@ import { describe, test, expect } from '@jest/globals';
 import { create } from '../';
 
 describe(`min/max width/height`, () => {
-  let tw = create();
+  let tw = create({}, { windowDimensions: { width: 800, height: 600 } });
   beforeEach(() => {
-    tw = create();
-    tw.setWindowDimensions({ width: 800, height: 600 });
+    tw = create({}, { windowDimensions: { width: 800, height: 600 } });
   });
 
   const cases: Array<[string, Record<string, string | number>]> = [

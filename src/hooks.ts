@@ -1,31 +1,54 @@
-import { useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useColorScheme, useWindowDimensions } from 'react-native';
 import type { TailwindFn, RnColorScheme } from './types';
+import type { TwConfig } from './tw-config';
+import type { Platform } from './types';
+import rawCreate from './create';
 
 type AppOptions = {
   observeDeviceColorSchemeChanges: false;
   initialColorScheme: 'device' | 'light' | 'dark';
 };
 
-export function useDeviceContext(tw: TailwindFn, appOptions?: AppOptions): void {
+export function useDeviceContext(
+  twConfig: TwConfig,
+  platform: Platform,
+  appOptions?: AppOptions,
+): TailwindFn {
   const deviceColorScheme = useColorScheme();
-  useState(() => {
-    // (mis?)use `useState` initializer fn to initialize appColorScheme only ONCE
+  const window = useWindowDimensions();
+
+  const [appColorScheme, setAppColorScheme] = useState<RnColorScheme>(() => {
     if (appOptions) {
       const initial = appOptions.initialColorScheme;
-      tw.setColorScheme(initial === `device` ? deviceColorScheme : initial);
       if (`withDeviceColorScheme` in appOptions) {
         console.error(MIGRATION_ERR); // eslint-disable-line no-console
       }
+      return initial === `device` ? deviceColorScheme : initial;
     }
+    return undefined;
   });
-  const window = useWindowDimensions();
-  tw.updateDeviceContext(
-    window,
-    window.fontScale,
-    window.scale === 1 ? 1 : 2,
-    appOptions ? `skip` : deviceColorScheme,
+
+  const colorScheme = appOptions ? appColorScheme : deviceColorScheme;
+
+  const tw = useMemo(
+    () =>
+      rawCreate(twConfig, {
+        platform,
+        windowDimensions: window,
+        fontScale: window.fontScale,
+        pixelDensity: window.scale === 1 ? 1 : 2,
+        colorScheme,
+      }),
+    [twConfig, platform, window, colorScheme],
   );
+
+  // store setAppColorScheme and current colorScheme on tw for useAppColorScheme
+  const ref = useRef({ setAppColorScheme, colorScheme });
+  ref.current = { setAppColorScheme, colorScheme };
+  (tw as any).__colorSchemeRef = ref;
+
+  return tw;
 }
 
 export function useAppColorScheme(
@@ -35,16 +58,18 @@ export function useAppColorScheme(
   toggleColorScheme: () => void,
   setColorScheme: (colorScheme: RnColorScheme) => void,
 ] {
-  const [helper, setHelper] = useState(0);
+  const ref = (tw as any).__colorSchemeRef as React.MutableRefObject<{
+    setAppColorScheme: (cs: RnColorScheme) => void;
+    colorScheme: RnColorScheme;
+  }>;
   return [
-    tw.getColorScheme(),
+    ref.current.colorScheme,
     () => {
-      tw.setColorScheme(tw.getColorScheme() === `dark` ? `light` : `dark`);
-      setHelper(helper + 1);
+      const next = ref.current.colorScheme === `dark` ? `light` : `dark`;
+      ref.current.setAppColorScheme(next);
     },
     (newColorScheme) => {
-      tw.setColorScheme(newColorScheme);
-      setHelper(helper + 1);
+      ref.current.setAppColorScheme(newColorScheme);
     },
   ];
 }

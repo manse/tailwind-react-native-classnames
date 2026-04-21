@@ -2,10 +2,10 @@ import { describe, test, expect } from '@jest/globals';
 import { create } from '../';
 
 describe(`width/height utilities`, () => {
-  let tw = create();
+  const deviceCtx = { windowDimensions: { width: 800, height: 600 } };
+  let tw = create({ theme: { screens: {} } }, deviceCtx);
   beforeEach(() => {
-    tw = create({ theme: { screens: {} } });
-    tw.setWindowDimensions({ width: 800, height: 600 });
+    tw = create({ theme: { screens: {} } }, deviceCtx);
   });
 
   const cases: Array<[string, Record<string, string | number>]> = [

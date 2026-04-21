@@ -1,9 +1,9 @@
 import TestRenderer from 'react-test-renderer';
 import rn from 'react-native';
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, test, expect } from '@jest/globals';
 import React from 'react';
 import type { TailwindFn } from '../';
-import { create, useDeviceContext, useAppColorScheme } from '../';
+import { useDeviceContext, useAppColorScheme } from '../';
 
 jest.mock(`react-native`, () => ({
   Platform: {
@@ -14,11 +14,8 @@ jest.mock(`react-native`, () => ({
   useWindowDimensions: () => ({ width: 320, height: 640, fontScale: 1, scale: 2 }),
 }));
 
-const Test: React.FC<{ tw: TailwindFn; initial: 'light' | 'dark' | 'device' }> = ({
-  tw,
-  initial,
-}) => {
-  useDeviceContext(tw, {
+const Test: React.FC<{ initial: 'light' | 'dark' | 'device' }> = ({ initial }) => {
+  const tw = useDeviceContext({}, `ios`, {
     observeDeviceColorSchemeChanges: false,
     initialColorScheme: initial,
   });
@@ -35,37 +32,39 @@ describe(`useAppColorScheme()`, () => {
   it(`should initialize to ambient color scheme, if no initializer`, () => {
     rn.useColorScheme = () => `dark`;
 
-    let component = TestRenderer.create(<Test tw={create()} initial="device" />);
+    let component = TestRenderer.create(<Test initial="device" />);
     expect(component.toJSON()).toEqual([`dark`, `match:dark`]);
 
     rn.useColorScheme = () => `light`;
-    component = TestRenderer.create(<Test tw={create()} initial="device" />);
+    component = TestRenderer.create(<Test initial="device" />);
     expect(component.toJSON()).toEqual([`light`, `no-match:dark`]);
 
     rn.useColorScheme = () => null;
-    component = TestRenderer.create(<Test tw={create()} initial="device" />);
+    component = TestRenderer.create(<Test initial="device" />);
     expect(component.toJSON()).toEqual([`null`, `no-match:dark`]);
 
     rn.useColorScheme = () => undefined;
-    component = TestRenderer.create(<Test tw={create()} initial="device" />);
+    component = TestRenderer.create(<Test initial="device" />);
     expect(component.toJSON()).toEqual([`undefined`, `no-match:dark`]);
   });
 
   it(`should initialize to explicitly passed color scheme when initializer provided`, () => {
     rn.useColorScheme = () => `dark`;
 
-    let component = TestRenderer.create(<Test tw={create()} initial="light" />);
+    let component = TestRenderer.create(<Test initial="light" />);
     expect(component.toJSON()).toEqual([`light`, `no-match:dark`]);
 
     rn.useColorScheme = () => `light`;
-    component = TestRenderer.create(<Test tw={create()} initial="dark" />);
+    component = TestRenderer.create(<Test initial="dark" />);
     expect(component.toJSON()).toEqual([`dark`, `match:dark`]);
   });
 
   test(`nested components should read same app color scheme`, () => {
-    const tw = create();
+    let sharedTw: TailwindFn | null = null;
 
     const NestedComponent: React.FC = () => {
+      const tw = sharedTw;
+      if (!tw) throw new Error(`sharedTw not set`);
       const [colorScheme] = useAppColorScheme(tw);
       return (
         <>
@@ -80,10 +79,11 @@ describe(`useAppColorScheme()`, () => {
     const Component: React.FC<{ initial: 'light' | 'dark' | 'device' }> = ({
       initial,
     }) => {
-      useDeviceContext(tw, {
+      const tw = useDeviceContext({}, `ios`, {
         observeDeviceColorSchemeChanges: false,
         initialColorScheme: initial,
       });
+      sharedTw = tw;
       const [colorScheme, toggleColorScheme] = useAppColorScheme(tw);
       return (
         <>

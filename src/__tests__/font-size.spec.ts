@@ -23,7 +23,7 @@ describe(`font size`, () => {
 
   test(`arbitrary font sizes`, () => {
     expect(tw`text-[11px]`).toMatchObject({ fontSize: 11 });
-    tw.setWindowDimensions({ width: 800, height: 600 });
+    tw = create({}, { windowDimensions: { width: 800, height: 600 } });
     expect(tw`text-[50vw]`).toMatchObject({ fontSize: 400 });
     expect(tw`text-[50vh]`).toMatchObject({ fontSize: 300 });
   });
