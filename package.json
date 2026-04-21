@@ -1,5 +1,5 @@
 {
-  "name": "twrnc",
+  "name": "@manse/twrnc",
   "version": "4.16.0",
   "description": "simple, expressive API for tailwindcss + react-native",
   "author": "Jared Henderson <jared@netrivet.com>",
