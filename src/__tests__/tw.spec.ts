@@ -358,6 +358,57 @@ describe(`tw`, () => {
     expect(tw`font-light`).toEqual({ fontWeight: `600` });
   });
 
+  test(`fontFamily weight-map resolves font-family + font-weight`, () => {
+    const tw = create({
+      theme: {
+        fontFamily: {
+          helvetica: {
+            thin: `HelveticaNeue-Thin`,
+            light: `HelveticaNeue-Light`,
+            normal: `HelveticaNeue`,
+            bold: `HelveticaNeue-Bold`,
+            black: `HelveticaNeue-Black`,
+          },
+        },
+      },
+    });
+
+    // font-family + font-weight combination
+    expect(tw`font-helvetica font-thin`).toEqual({ fontFamily: `HelveticaNeue-Thin` });
+    expect(tw`font-helvetica font-light`).toEqual({ fontFamily: `HelveticaNeue-Light` });
+    expect(tw`font-helvetica font-bold`).toEqual({ fontFamily: `HelveticaNeue-Bold` });
+    expect(tw`font-helvetica font-black`).toEqual({ fontFamily: `HelveticaNeue-Black` });
+
+    // font-family alone defaults to 400
+    expect(tw`font-helvetica`).toEqual({ fontFamily: `HelveticaNeue` });
+
+    // order should not matter
+    expect(tw`font-bold font-helvetica`).toEqual({ fontFamily: `HelveticaNeue-Bold` });
+
+    // normal weight (alias for 400)
+    expect(tw`font-helvetica font-normal`).toEqual({ fontFamily: `HelveticaNeue` });
+  });
+
+  test(`fontFamily weight-map works with theme.extend`, () => {
+    const tw = create({
+      theme: {
+        extend: {
+          fontFamily: {
+            custom: {
+              normal: `CustomFont-Regular`,
+              bold: `CustomFont-Bold`,
+            },
+          },
+        },
+      },
+    });
+
+    expect(tw`font-custom`).toEqual({ fontFamily: `CustomFont-Regular` });
+    expect(tw`font-custom font-bold`).toEqual({ fontFamily: `CustomFont-Bold` });
+    // existing font families still work
+    expect(tw`font-sans`).toEqual({ fontFamily: `ui-sans-serif` });
+  });
+
   test(`ir caching between breakpoints`, () => {
     // one creation, reused so cache is shared
     const tw = create({}, { windowDimensions: { width: 1100, height: 600 } }); // breakpoint=lg

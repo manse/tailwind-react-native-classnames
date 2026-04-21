@@ -36,7 +36,7 @@ export interface TwTheme {
   flexShrink?: Record<string, number | string>;
   gap?: Record<string, string>;
   fontWeight?: Record<string, number | string>;
-  fontFamily?: Record<string, string | string[]>;
+  fontFamily?: Record<string, string | string[] | Record<string, string>>;
   zIndex?: Record<string, number | string>;
   scale?: Record<string, string>;
   rotate?: Record<string, string>;

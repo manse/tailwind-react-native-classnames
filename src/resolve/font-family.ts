@@ -15,6 +15,11 @@ export default function fontFamily(
     return complete({ fontFamily: configValue });
   }
 
+  if (!Array.isArray(configValue)) {
+    // weight-map object handled by getCustomFontUtils in create.ts
+    return null;
+  }
+
   const firstFamily = configValue[0];
   if (!firstFamily) {
     return null;

@@ -259,6 +259,25 @@ function getCustomFontUtils(
       ...Object.entries(customConfig.theme?.fontFamily ?? {}),
       ...Object.entries(customConfig.theme?.extend?.fontFamily ?? {}),
     ].forEach(([name, value]) => {
+      // weight-map object: { normal: 'Font-Regular', bold: 'Font-Bold', ... }
+      if (isPlainObject(value)) {
+        const weightMap = value as Record<string, string>;
+        customStyleUtils.push([
+          `font-${name}`,
+          {
+            kind: `dependent`,
+            complete(style) {
+              const weight = normalizeFontWeight(style.fontWeight as string | undefined);
+              const fontFamily = weightMap[weight] ?? weightMap[`normal`];
+              if (fontFamily) {
+                style.fontFamily = fontFamily;
+                delete style.fontWeight;
+              }
+            },
+          },
+        ]);
+        return;
+      }
       const fontFamily = Array.isArray(value) ? value[0] : value;
       if (fontFamily) {
         customStyleUtils.push([`font-${name}`, complete({ fontFamily })]);
@@ -266,4 +285,25 @@ function getCustomFontUtils(
     });
   }
   return customStyleUtils;
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === `object` && value !== null && !Array.isArray(value);
+}
+
+const FONT_WEIGHT_ALIASES: Record<string, string> = {
+  100: `thin`,
+  200: `extralight`,
+  300: `light`,
+  400: `normal`,
+  500: `medium`,
+  600: `semibold`,
+  700: `bold`,
+  800: `extrabold`,
+  900: `black`,
+};
+
+function normalizeFontWeight(weight: string | undefined): string {
+  if (!weight) return `400`;
+  return FONT_WEIGHT_ALIASES[weight] ?? weight;
 }
