@@ -68,7 +68,7 @@ function borderWidth(
   }
 
   value = value.replace(LEADING_DASH, ``);
-  const key = value === `` ? `DEFAULT` : value;
+  const key = value || `DEFAULT`;
   const configValue = config[key];
   if (configValue === undefined) {
     return null;

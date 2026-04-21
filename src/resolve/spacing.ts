@@ -19,7 +19,7 @@ export default function spacing(
   if (isArbitraryValue(value)) {
     numericValue = value.slice(1, -1);
   } else {
-    const configKey = value === `` ? `DEFAULT` : value;
+    const configKey = value || `DEFAULT`;
     const configValue = config?.[configKey];
 
     if (!configValue) {

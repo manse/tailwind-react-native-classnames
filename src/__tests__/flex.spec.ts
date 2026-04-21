@@ -99,4 +99,40 @@ describe(`flex gap`, () => {
   test.each(cases)(`tw\`%s\` -> %s`, (utility, expected) => {
     expect(tw.style(utility)).toEqual(expected);
   });
+
+  test(`gap with spacing DEFAULT`, () => {
+    tw = create({
+      theme: {
+        extend: {
+          spacing: {
+            DEFAULT: `8px`,
+          },
+        },
+      },
+    });
+
+    // bare `gap` should resolve to spacing DEFAULT
+    expect(tw`gap`).toEqual({ gap: 8 });
+    expect(tw.style(`gap`)).toEqual({ gap: 8 });
+
+    // directional bare DEFAULT
+    expect(tw`gap-x`).toEqual({ columnGap: 8 });
+    expect(tw`gap-y`).toEqual({ rowGap: 8 });
+
+    // multiple in one string
+    expect(tw`gap gap-x gap-y`).toEqual({ gap: 8, columnGap: 8, rowGap: 8 });
+
+    // mixed with explicit values
+    expect(tw`gap gap-x-2`).toEqual({ gap: 8, columnGap: 8 });
+
+    // explicit values still work
+    expect(tw`gap-1`).toEqual({ gap: 4 });
+  });
+
+  test(`gap bare without spacing DEFAULT returns empty`, () => {
+    tw = create();
+    expect(tw`gap`).toEqual({});
+    expect(tw`gap-x`).toEqual({});
+    expect(tw`gap-y`).toEqual({});
+  });
 });

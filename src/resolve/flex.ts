@@ -24,7 +24,7 @@ export function flexGrowShrink(
   if (isArbitraryValue(value)) {
     value = value.slice(1, -1);
   }
-  const configKey = value === `` ? `DEFAULT` : value;
+  const configKey = value || `DEFAULT`;
   const numericValue = Number(config?.[configKey] ?? value);
   if (!Number.isNaN(numericValue)) {
     return complete({ [`flex${type}`]: numericValue });
@@ -119,9 +119,18 @@ export function gap(
     return ``;
   });
 
+  if (value === `-x`) {
+    gapStyle = `columnGap`;
+    value = ``;
+  } else if (value === `-y`) {
+    gapStyle = `rowGap`;
+    value = ``;
+  }
+
   value = value.replace(LEADING_DASH, ``);
 
-  const configValue = config === null || config === void 0 ? void 0 : config[value];
+  const configKey = value || `DEFAULT`;
+  const configValue = config?.[configKey];
   if (configValue !== undefined) {
     return getCompleteStyle(gapStyle, configValue, context);
   }
