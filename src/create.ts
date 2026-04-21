@@ -183,13 +183,23 @@ export function create(
       // Iterate supported theme objects and try to find a match
       for (const key of Object.keys(PREFIX_COLOR_PROP_MAP)) {
         const prefix = key as keyof typeof PREFIX_COLOR_PROP_MAP;
-        const suffix = utils.slice(prefix.length);
         const themePropertyName = PREFIX_COLOR_PROP_MAP[prefix];
         const themeColors = config.theme[themePropertyName];
 
-        if (suffix && utils.startsWith(prefix) && themeColors) {
-          color = configColor(suffix, themeColors);
+        if (utils.startsWith(prefix) && themeColors) {
+          const suffix = utils.slice(prefix.length);
+          if (suffix) {
+            color = configColor(suffix, themeColors);
+            if (color) {
+              return color;
+            }
+          }
+        }
 
+        // bare prefix without `-` (e.g. `bg`, `text`) resolves to DEFAULT
+        const barePrefix = prefix.slice(0, -1); // remove trailing `-`
+        if (utils === barePrefix && themeColors) {
+          color = configColor(`DEFAULT`, themeColors);
           if (color) {
             return color;
           }

@@ -102,9 +102,9 @@ export default class UtilityParser {
     switch (this.char) {
       case `m`:
       case `p`: {
+        const prop = this.char === `m` ? `margin` : `padding`;
         const match = this.peekSlice(1, 3).match(/^(t|b|r|l|x|y)?-/);
         if (match) {
-          const prop = this.char === `m` ? `margin` : `padding`;
           this.advance((match[0]?.length ?? 0) + 1);
           const spacingDirection = h.getDirection(match[1]);
           const style = spacing(
@@ -115,6 +115,24 @@ export default class UtilityParser {
             this.config.theme?.[prop],
           );
           if (style) return style;
+        }
+        // handle bare `p`, `m`, `pt`, `mx`, etc. for DEFAULT spacing values
+        const dirMatch = this.peekSlice(1, 2).match(/^[tbrlxy]$/);
+        const afterDir = this.peekSlice(dirMatch ? 2 : 1, dirMatch ? 3 : 2);
+        if (afterDir === `` || afterDir === undefined) {
+          const savedPos = this.position;
+          this.advance(1 + (dirMatch ? 1 : 0));
+          const spacingDirection = h.getDirection(dirMatch?.[0]);
+          const style = spacing(
+            prop,
+            spacingDirection,
+            this.rest,
+            this.context,
+            this.config.theme?.[prop],
+          );
+          if (style) return style;
+          this.position = savedPos;
+          this.char = this.string[this.position];
         }
       }
     }
@@ -167,6 +185,12 @@ export default class UtilityParser {
       }
     }
 
+    // bare `text` for textColor DEFAULT
+    if (this.rest === `text`) {
+      style = color(`text`, `DEFAULT`, theme?.textColor);
+      if (style) return style;
+    }
+
     if (this.consumePeeked(`font-`)) {
       style = fontFamily(this.rest, theme?.fontFamily);
       if (style) return style;
@@ -193,6 +217,12 @@ export default class UtilityParser {
         style = colorOpacity(`bg`, this.rest);
         if (style) return style;
       }
+    }
+
+    // bare `bg` for backgroundColor DEFAULT
+    if (this.rest === `bg`) {
+      style = color(`bg`, `DEFAULT`, theme?.backgroundColor);
+      if (style) return style;
     }
 
     if (this.consumePeeked(`border`)) {

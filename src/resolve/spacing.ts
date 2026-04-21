@@ -19,7 +19,8 @@ export default function spacing(
   if (isArbitraryValue(value)) {
     numericValue = value.slice(1, -1);
   } else {
-    const configValue = config?.[value];
+    const configKey = value === `` ? `DEFAULT` : value;
+    const configValue = config?.[configKey];
 
     if (!configValue) {
       const unconfigged = parseUnconfigged(value);

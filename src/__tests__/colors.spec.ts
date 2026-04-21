@@ -251,4 +251,88 @@ describe(`colors`, () => {
     expect(tw`text-jim-jam-slam`).toEqual({ color: `#eea` });
     expect(tw`text-jim-jam-slam-nope`).toEqual({});
   });
+
+  test(`backgroundColor DEFAULT without suffix`, () => {
+    tw = create({
+      theme: {
+        extend: {
+          backgroundColor: {
+            DEFAULT: `#aabbcc`,
+          },
+        },
+      },
+    });
+    // bare `bg` should resolve to backgroundColor DEFAULT via tw``, tw.style(), tw.color()
+    expect(tw`bg`).toEqual({ backgroundColor: `#aabbcc` });
+    expect(tw.style(`bg`)).toEqual({ backgroundColor: `#aabbcc` });
+    expect(tw.color(`bg`)).toBe(`#aabbcc`);
+    // explicit color should still work
+    expect(tw`bg-black`).toEqual({ backgroundColor: `#000` });
+  });
+
+  test(`textColor DEFAULT without suffix`, () => {
+    tw = create({
+      theme: {
+        extend: {
+          textColor: {
+            DEFAULT: `#112233`,
+          },
+        },
+      },
+    });
+    // bare `text` should resolve to textColor DEFAULT via tw``, tw.style(), tw.color()
+    expect(tw`text`).toEqual({ color: `#112233` });
+    expect(tw.style(`text`)).toEqual({ color: `#112233` });
+    expect(tw.color(`text`)).toBe(`#112233`);
+    // explicit color should still work
+    expect(tw`text-black`).toEqual({ color: `#000` });
+  });
+
+  test(`textColor nested DEFAULT`, () => {
+    tw = create({
+      theme: {
+        extend: {
+          textColor: {
+            primary: { DEFAULT: `#aa0000`, light: `#ff0000` },
+          },
+        },
+      },
+    });
+    // `text-primary` should resolve to DEFAULT within the primary group
+    expect(tw`text-primary`).toEqual({ color: `#aa0000` });
+    expect(tw.style(`text-primary`)).toEqual({ color: `#aa0000` });
+    expect(tw.color(`text-primary`)).toBe(`#aa0000`);
+    // explicit sub-key should still work
+    expect(tw`text-primary-light`).toEqual({ color: `#ff0000` });
+    expect(tw.color(`text-primary-light`)).toBe(`#ff0000`);
+  });
+
+  test(`backgroundColor nested DEFAULT`, () => {
+    tw = create({
+      theme: {
+        extend: {
+          backgroundColor: {
+            brand: {
+              DEFAULT: `#00aa00`,
+              dark: `#006600`,
+              accent: { DEFAULT: `#0000ff`, muted: `#000099` },
+            },
+          },
+        },
+      },
+    });
+    // `bg-brand` should resolve to brand.DEFAULT
+    expect(tw`bg-brand`).toEqual({ backgroundColor: `#00aa00` });
+    expect(tw.style(`bg-brand`)).toEqual({ backgroundColor: `#00aa00` });
+    expect(tw.color(`bg-brand`)).toBe(`#00aa00`);
+    // `bg-brand-dark` should resolve to brand.dark
+    expect(tw`bg-brand-dark`).toEqual({ backgroundColor: `#006600` });
+    expect(tw.color(`bg-brand-dark`)).toBe(`#006600`);
+    // `bg-brand-accent` should resolve to brand.accent.DEFAULT (3 levels deep)
+    expect(tw`bg-brand-accent`).toEqual({ backgroundColor: `#0000ff` });
+    expect(tw.color(`bg-brand-accent`)).toBe(`#0000ff`);
+    // `bg-brand-accent-muted` should resolve to brand.accent.muted
+    expect(tw`bg-brand-accent-muted`).toEqual({ backgroundColor: `#000099` });
+    expect(tw.color(`bg-brand-accent-muted`)).toBe(`#000099`);
+  });
 });

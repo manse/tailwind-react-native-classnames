@@ -75,4 +75,111 @@ describe(`margin`, () => {
       marginRight: 2,
     });
   });
+
+  test(`spacing DEFAULT value`, () => {
+    tw = create({
+      theme: {
+        extend: {
+          spacing: {
+            DEFAULT: `1px`,
+          },
+        },
+      },
+    });
+
+    // bare `p` should resolve to padding with DEFAULT value
+    const expectedP = {
+      paddingTop: 1,
+      paddingRight: 1,
+      paddingBottom: 1,
+      paddingLeft: 1,
+    };
+    expect(tw`p`).toEqual(expectedP);
+    expect(tw.style(`p`)).toEqual(expectedP);
+
+    // bare `m` should resolve to margin with DEFAULT value
+    const expectedM = {
+      marginTop: 1,
+      marginBottom: 1,
+      marginLeft: 1,
+      marginRight: 1,
+    };
+    expect(tw`m`).toEqual(expectedM);
+    expect(tw.style(`m`)).toEqual(expectedM);
+
+    // directional variants should also work
+    expect(tw`pt`).toEqual({ paddingTop: 1 });
+    expect(tw`pb`).toEqual({ paddingBottom: 1 });
+    expect(tw`pl`).toEqual({ paddingLeft: 1 });
+    expect(tw`pr`).toEqual({ paddingRight: 1 });
+    expect(tw`px`).toEqual({ paddingLeft: 1, paddingRight: 1 });
+    expect(tw`py`).toEqual({ paddingTop: 1, paddingBottom: 1 });
+    expect(tw`mt`).toEqual({ marginTop: 1 });
+    expect(tw`mb`).toEqual({ marginBottom: 1 });
+    expect(tw`ml`).toEqual({ marginLeft: 1 });
+    expect(tw`mr`).toEqual({ marginRight: 1 });
+    expect(tw`mx`).toEqual({ marginLeft: 1, marginRight: 1 });
+    expect(tw`my`).toEqual({ marginTop: 1, marginBottom: 1 });
+
+    // explicit values should still work
+    expect(tw`m-1`).toEqual({
+      marginTop: 4,
+      marginBottom: 4,
+      marginLeft: 4,
+      marginRight: 4,
+    });
+
+    // multiple bare DEFAULT utilities in a single class string
+    expect(tw`m p`).toEqual({
+      marginTop: 1,
+      marginBottom: 1,
+      marginLeft: 1,
+      marginRight: 1,
+      paddingTop: 1,
+      paddingRight: 1,
+      paddingBottom: 1,
+      paddingLeft: 1,
+    });
+
+    expect(tw`mt mb pt pb`).toEqual({
+      marginTop: 1,
+      marginBottom: 1,
+      paddingTop: 1,
+      paddingBottom: 1,
+    });
+
+    expect(tw`mx py`).toEqual({
+      marginLeft: 1,
+      marginRight: 1,
+      paddingTop: 1,
+      paddingBottom: 1,
+    });
+
+    // mixed bare DEFAULT and explicit values
+    expect(tw`p m-2`).toEqual({
+      paddingTop: 1,
+      paddingRight: 1,
+      paddingBottom: 1,
+      paddingLeft: 1,
+      marginTop: 8,
+      marginBottom: 8,
+      marginLeft: 8,
+      marginRight: 8,
+    });
+
+    expect(tw`mt ml-4 pb pr-2`).toEqual({
+      marginTop: 1,
+      marginLeft: 16,
+      paddingBottom: 1,
+      paddingRight: 8,
+    });
+  });
+
+  test(`spacing DEFAULT value does not match without config`, () => {
+    tw = create();
+    // bare `p` without DEFAULT in config should return empty
+    expect(tw`p`).toEqual({});
+    expect(tw`m`).toEqual({});
+    expect(tw`pt`).toEqual({});
+  });
 });
