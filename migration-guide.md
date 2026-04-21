@@ -71,12 +71,6 @@ for users whose devices are set to dark mode. If you want to replicate the forme
 before the bug was fixed, you should explicitly pass `"light"` for `initialColorScheme`
 when calling `useDeviceContext()`.
 
-## 💃 New Features
-
-The main `tw` object now exposes a `.memoBuster` string property, which can be useful for
-resolving some simple memoization re-render failure issues. See
-[here for more](./readme.md#memo-busting).
-
 # Migrating to 3.x.x
 
 **Color renames**. In line with the

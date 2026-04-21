@@ -5,8 +5,6 @@ export interface TailwindFn {
   style: (...inputs: ClassInput[]) => Style;
   color: (color: string) => string | undefined;
   prefixMatch: (...prefixes: string[]) => boolean;
-  memoBuster: string;
-
   // NB: @see https://www.typescriptlang.org/tsconfig#stripInternal
 
   /**

@@ -55,7 +55,6 @@ const MyComponent = () => (
 - [JIT-style Arbitrary Values](#jit-style-arbitrary-values)
 - [VS Code Intellisense](#vs-code-intellisense)
 - [JetBrains IDEs Intellisense](#jetbrains-ides-intellisense)
-- [Memo-Busting](#memo-busting)
 - [Migrating from previous versions](#migrating-from-previous-versions)
 - [Prior Art](#prior-art)
 
@@ -473,26 +472,6 @@ Style Sheets | Tailwind CSS. Add the following configuration options:
 
 It is important that you have a `tailwind.config.js` in the root of the repository even if
 the content is just `export default {}`, otherwise the Tailwind LSP won't start correctly.
-
-## Memo Busting
-
-If you're using device-context prefixes (like `dark:`, and `md:`), _memoized_ components
-can cause problems by preventing re-renders when the color scheme or window size changes.
-You may not be memoizing explicitly yourself as many third-party libraries (like
-`react-navigation`) memoizes their own components.
-
-In order to help with this problem, `twrnc` exposes a `.memoBuster` property on the `tw`
-object. This string property is meant to passed as a `key` prop to break memoization
-boundaries. It is stable (preventing re-renders) until something in the device context
-changes, at which point it deterministically updates:
-
-```tsx
-<SomeMemoizedComponent key={tw.memoBuster} />
-```
-
-> This is not a perfect solution for **all** memoization issues. For caveats and more
-> context, see
-> [#112](https://github.com/jaredh159/tailwind-react-native-classnames/issues/112).
 
 ## Migrating from Previous Versions
 

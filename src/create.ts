@@ -74,12 +74,10 @@ export function create(
 
   const contextCaches: Record<string, Cache> = {};
   let cache = new Cache();
-  tailwindFn.memoBuster = ``;
   configureCache();
 
   function configureCache(): void {
     const cacheGroup = deriveCacheGroup();
-    tailwindFn.memoBuster = `twrnc-memobuster-key--${cacheGroup}`;
     const existing = contextCaches[cacheGroup];
     if (existing) {
       cache = existing;
