@@ -422,4 +422,22 @@ describe(`tw`, () => {
     expect(tw`bg-white bg-black`).toEqual({ backgroundColor: `#000` });
     expect(tw`bg-white bg-black bg-white`).toEqual({ backgroundColor: `#fff` });
   });
+
+  test(`unknown utility warning includes full utility name`, () => {
+    const helpers = require(`../helpers`);
+    const warnSpy = jest.spyOn(helpers, `warn`);
+    tw = create();
+    tw`bogus-utility`;
+    expect(warnSpy).toHaveBeenCalledWith(
+      `\`bogus-utility\` unknown or invalid utility`,
+    );
+    warnSpy.mockClear();
+
+    // partially consumed utilities should still show the full name
+    tw`border-bogus`;
+    expect(warnSpy).toHaveBeenCalledWith(
+      `\`border-bogus\` unknown or invalid utility`,
+    );
+    warnSpy.mockRestore();
+  });
 });
