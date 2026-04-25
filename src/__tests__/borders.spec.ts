@@ -38,6 +38,11 @@ describe(`borders`, () => {
     [`border-l-[2.5rem]`, { borderLeftWidth: 40 }],
 
     [`border-[7%]`, {}], // not supported in RN
+    // bare directional borders (DEFAULT width)
+    [`border-t`, { borderTopWidth: 1 }],
+    [`border-b`, { borderBottomWidth: 1 }],
+    [`border-l`, { borderLeftWidth: 1 }],
+    [`border-r`, { borderRightWidth: 1 }],
   ];
 
   test.each(basicCases)(`tw\`%s\` -> %s`, (utility, expected) => {
