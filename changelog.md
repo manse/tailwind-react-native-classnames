@@ -12,8 +12,8 @@ on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project ad
 
 ### Fixed
 
-- Show full utility name in unknown utility warnings (e.g., `border-bogus` instead of
-  just the unconsumed remainder).
+- Show full utility name in unknown utility warnings (e.g., `border-bogus` instead of just
+  the unconsumed remainder).
 
 ## [4.16.3] - 2026-04-21
 
@@ -42,8 +42,8 @@ on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project ad
 
 - Add spacing utilities with DEFAULT values (bare `m`, `p`, `mt`, `mx`, etc. resolve
   spacing DEFAULT when configured).
-- Add bare `text` and `bg` DEFAULT color resolution (e.g., `tw\`bg\`` resolves
-  `backgroundColor` DEFAULT).
+- Add bare `text` and `bg` DEFAULT color resolution (e.g.,
+  `tw\`bg\``resolves`backgroundColor` DEFAULT).
 - Add regex constants to `UtilityParser` for improved performance.
 
 ### Changed

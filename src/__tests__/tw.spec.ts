@@ -2,6 +2,7 @@ import { describe, test, expect } from '@jest/globals';
 import type { ViewStyle } from 'react-native';
 import type { TwConfig } from '../tw-config';
 import { create } from '../';
+import * as helpers from '../helpers';
 
 jest.mock(`react-native`, () => ({
   Platform: {
@@ -424,20 +425,15 @@ describe(`tw`, () => {
   });
 
   test(`unknown utility warning includes full utility name`, () => {
-    const helpers = require(`../helpers`);
     const warnSpy = jest.spyOn(helpers, `warn`);
     tw = create();
     tw`bogus-utility`;
-    expect(warnSpy).toHaveBeenCalledWith(
-      `\`bogus-utility\` unknown or invalid utility`,
-    );
+    expect(warnSpy).toHaveBeenCalledWith(`\`bogus-utility\` unknown or invalid utility`);
     warnSpy.mockClear();
 
     // partially consumed utilities should still show the full name
     tw`border-bogus`;
-    expect(warnSpy).toHaveBeenCalledWith(
-      `\`border-bogus\` unknown or invalid utility`,
-    );
+    expect(warnSpy).toHaveBeenCalledWith(`\`border-bogus\` unknown or invalid utility`);
     warnSpy.mockRestore();
   });
 });
