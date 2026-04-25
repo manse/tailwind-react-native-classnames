@@ -6,6 +6,15 @@ on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project ad
 
 [comment]: # 'Section Titles: Added/Fixed/Changed/Removed'
 
+## [4.16.4] - 2026-04-25
+
+`0e1b309` - `96a31f1`
+
+### Fixed
+
+- Show full utility name in unknown utility warnings (e.g., `border-bogus` instead of
+  just the unconsumed remainder).
+
 ## [4.16.3] - 2026-04-21
 
 `fd9bcf9` - `781e7bd`
