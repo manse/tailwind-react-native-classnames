@@ -6,6 +6,49 @@ on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project ad
 
 [comment]: # 'Section Titles: Added/Fixed/Changed/Removed'
 
+## [4.16.3] - 2026-04-21
+
+`fd9bcf9` - `781e7bd`
+
+### Fixed
+
+- Fix DEFAULT key resolution for `gap`, `borders`, `flex`, and `spacing` utilities (bare
+  `gap`, `gap-x`, `gap-y` now correctly resolve spacing DEFAULT values).
+
+## [4.16.2] - 2026-04-21
+
+`d397b20` - `3d97397`
+
+### Added
+
+- Add `fontFamily` weight-map support for per-weight font family resolution (e.g.,
+  `font-helvetica font-bold` resolves to `HelveticaNeue-Bold` when configured with a
+  weight-map object in `theme.fontFamily`).
+
+## [4.16.1] - 2026-04-21
+
+`869f8a7` - `526651a`
+
+### Added
+
+- Add spacing utilities with DEFAULT values (bare `m`, `p`, `mt`, `mx`, etc. resolve
+  spacing DEFAULT when configured).
+- Add bare `text` and `bg` DEFAULT color resolution (e.g., `tw\`bg\`` resolves
+  `backgroundColor` DEFAULT).
+- Add regex constants to `UtilityParser` for improved performance.
+
+### Changed
+
+- Refactor `create()` to accept immutable `DeviceContext` and remove mutable setters
+  (`setColorScheme`, `setWindowDimensions`, etc.).
+
+### Removed
+
+- Remove `reactNativeVersion` checks and related code.
+- Remove `memoBuster` property and related code.
+- Remove `prefixMatch()` and prefix caching; `color()` now always returns a string.
+- Remove plugin system (`addUtilities` plugin API).
+
 ## [4.16.0] - 2025-12-30
 
 ### Added
