@@ -87,7 +87,7 @@
 - ✅ paddingTop
 - ✅ paddingVertical
 - ✅ position
-- 🚨 resizeMode // maybe TODO? add classes?
+- ✅ resizeMode
 - ✅ right
 - ✅ rowGap (requires RN >= 0.71)
 - ✅ shadowColor `shadow-red-200`

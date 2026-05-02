@@ -6,6 +6,19 @@ on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project ad
 
 [comment]: # 'Section Titles: Added/Fixed/Changed/Removed'
 
+## [4.16.6] - 2026-05-02
+
+`4494653` - `fc1e5a0`
+
+### Added
+
+- Add `resize-mode-*` utilities (`cover`, `contain`, `stretch`, `repeat`, `center`) that
+  resolve to React Native's `resizeMode` style property for `Image` components.
+
+### Removed
+
+- Revert `bg-cover` and `bg-contain` background-size utilities added in 4.16.5.
+
 ## [4.16.5] - 2026-05-02
 
 `53cc3ce` - `f7c5c3c`
