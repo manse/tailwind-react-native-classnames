@@ -121,6 +121,9 @@ const defaultStyles: Array<[string, StyleIR]> = [
   [`box-border`, complete({ boxSizing: `border-box` })],
   [`box-content`, complete({ boxSizing: `content-box` })],
 
+  [`bg-cover`, complete({ backgroundSize: `cover` })],
+  [`bg-contain`, complete({ backgroundSize: `contain` })],
+
   [`outline`, complete({ outlineStyle: `solid` })],
 
   // default box-shadow implementations
