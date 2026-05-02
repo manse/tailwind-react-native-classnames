@@ -6,6 +6,15 @@ on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project ad
 
 [comment]: # 'Section Titles: Added/Fixed/Changed/Removed'
 
+## [4.16.5] - 2026-05-02
+
+`53cc3ce` - `f7c5c3c`
+
+### Added
+
+- Add support for `bg-cover` and `bg-contain` background-size utilities (resolve to
+  `backgroundSize: cover` and `backgroundSize: contain` respectively).
+
 ## [4.16.4] - 2026-04-25
 
 `0e1b309` - `96a31f1`
