@@ -69,13 +69,13 @@
     "ts-jest": "^29.1.1",
     "typescript": "^5.3.3"
   },
-  "homepage": "https://github.com/jaredh159/tailwind-react-native-classnames",
+  "homepage": "https://github.com/manse/tailwind-react-native-classnames",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jaredh159/tailwind-react-native-classnames.git"
+    "url": "https://github.com/manse/tailwind-react-native-classnames.git"
   },
   "bugs": {
-    "url": "https://github.com/jaredh159/tailwind-react-native-classnames/issues"
+    "url": "https://github.com/manse/tailwind-react-native-classnames/issues"
   },
   "keywords": [
     "tailwind",
