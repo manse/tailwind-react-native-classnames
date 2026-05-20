@@ -202,7 +202,11 @@ export default class UtilityParser {
       if (this.consumePeeked(`ratio-`)) {
         h.warn(`\`aspect-ratio-{ratio}\` is deprecated, use \`aspect-{ratio}\` instead`);
       }
-      style = h.getCompleteStyle(`aspectRatio`, this.rest, { fractions: true });
+      let aspectValue = this.rest;
+      if (aspectValue[0] === `[` && aspectValue[aspectValue.length - 1] === `]`) {
+        aspectValue = aspectValue.slice(1, -1);
+      }
+      style = h.getCompleteStyle(`aspectRatio`, aspectValue, { fractions: true });
       if (style) return style;
     }
 

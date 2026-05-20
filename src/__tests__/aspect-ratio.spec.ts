@@ -14,6 +14,10 @@ describe(`aspect ratio`, () => {
       [`aspect-0.5`, { aspectRatio: 0.5 }],
       [`aspect-.5`, { aspectRatio: 0.5 }],
       [`aspect-16/9`, { aspectRatio: 16 / 9 }],
+      [`aspect-[16/9]`, { aspectRatio: 16 / 9 }],
+      [`aspect-[1/2]`, { aspectRatio: 1 / 2 }],
+      [`aspect-[1.5]`, { aspectRatio: 1.5 }],
+      [`aspect-[2]`, { aspectRatio: 2 }],
       // legacy, deprecated
       [`aspect-ratio-1`, { aspectRatio: 1 }],
       [`aspect-ratio-4`, { aspectRatio: 4 }],
