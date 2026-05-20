@@ -6,6 +6,15 @@ on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project ad
 
 [comment]: # 'Section Titles: Added/Fixed/Changed/Removed'
 
+## [4.16.7] - 2026-05-20
+
+`9bca3d6`
+
+### Added
+
+- Add support for arbitrary aspect ratio values via bracket notation (e.g.,
+  `aspect-[16/9]`, `aspect-[1.5]`, `aspect-[2]`).
+
 ## [4.16.6] - 2026-05-02
 
 `4494653` - `fc1e5a0`
