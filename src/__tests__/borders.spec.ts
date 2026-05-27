@@ -43,6 +43,17 @@ describe(`borders`, () => {
     [`border-b`, { borderBottomWidth: 1 }],
     [`border-l`, { borderLeftWidth: 1 }],
     [`border-r`, { borderRightWidth: 1 }],
+    // axis directional borders (DEFAULT width)
+    [`border-x`, { borderLeftWidth: 1, borderRightWidth: 1 }],
+    [`border-y`, { borderTopWidth: 1, borderBottomWidth: 1 }],
+    // axis directional borders with explicit width
+    [`border-x-2`, { borderLeftWidth: 2, borderRightWidth: 2 }],
+    [`border-y-2`, { borderTopWidth: 2, borderBottomWidth: 2 }],
+    [`border-x-4`, { borderLeftWidth: 4, borderRightWidth: 4 }],
+    [`border-y-4`, { borderTopWidth: 4, borderBottomWidth: 4 }],
+    // axis directional borders with arbitrary values
+    [`border-x-[25px]`, { borderLeftWidth: 25, borderRightWidth: 25 }],
+    [`border-y-[25px]`, { borderTopWidth: 25, borderBottomWidth: 25 }],
   ];
 
   test.each(basicCases)(`tw\`%s\` -> %s`, (utility, expected) => {

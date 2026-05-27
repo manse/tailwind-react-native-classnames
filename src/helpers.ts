@@ -2,7 +2,7 @@ import type { Style, Direction, CompleteStyle, ParseContext } from './types';
 import { Unit } from './types';
 
 const UNIT_SUFFIX = /(([a-z]{2,}|%))$/;
-const DIRECTION_SUFFIX = /^-(t|b|r|l|tr|tl|br|bl)(-|$)/;
+const DIRECTION_SUFFIX = /^-(t|b|r|l|tr|tl|br|bl|x|y)(-|$)/;
 
 export function complete(style: Style): CompleteStyle {
   return { kind: `complete`, style };

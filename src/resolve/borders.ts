@@ -47,9 +47,24 @@ export function border(value: string, theme?: TwTheme): StyleIR | null {
 
   // Finally Handling Arbitrary Width Case
   // border-[20px] or border-[2.5rem]
-  const prop = `border${direction === `All` ? `` : direction}Width`;
   rest = rest.replace(LEADING_DASH, ``);
   const numericValue = rest.slice(1, -1);
+  const axisProps = axisWidthProps(direction);
+  if (axisProps) {
+    const [propA, propB] = axisProps;
+    const a = unconfiggedStyle(propA, numericValue);
+    const b = unconfiggedStyle(propB, numericValue);
+    if (
+      !a ||
+      !b ||
+      typeof a.style[propA] !== `number` ||
+      typeof b.style[propB] !== `number`
+    ) {
+      return null;
+    }
+    return complete({ ...a.style, ...b.style });
+  }
+  const prop = `border${direction === `All` ? `` : direction}Width`;
   const arbitraryWidth = unconfiggedStyle(prop, numericValue);
   // can't use % for border-radius in RN
   if (typeof arbitraryWidth?.style[prop] !== `number`) {
@@ -74,8 +89,26 @@ function borderWidth(
     return null;
   }
 
+  const axisProps = axisWidthProps(direction);
+  if (axisProps) {
+    const [propA, propB] = axisProps;
+    const a = getCompleteStyle(propA, configValue);
+    const b = getCompleteStyle(propB, configValue);
+    if (!a || !b) return null;
+    return complete({ ...a.style, ...b.style });
+  }
   const prop = `border${direction === `All` ? `` : direction}Width`;
   return getCompleteStyle(prop, configValue);
+}
+
+function axisWidthProps(direction: Direction): [string, string] | null {
+  if (direction === `Horizontal`) {
+    return [`borderLeftWidth`, `borderRightWidth`];
+  }
+  if (direction === `Vertical`) {
+    return [`borderTopWidth`, `borderBottomWidth`];
+  }
+  return null;
 }
 
 export function borderRadius(
@@ -87,6 +120,9 @@ export function borderRadius(
   }
 
   let [rest, direction] = parseAndConsumeDirection(value);
+  if (direction === `Horizontal` || direction === `Vertical`) {
+    return null;
+  }
   rest = rest.replace(LEADING_DASH, ``);
   if (rest === ``) {
     rest = `DEFAULT`;
