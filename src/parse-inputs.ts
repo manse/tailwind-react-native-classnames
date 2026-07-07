@@ -3,18 +3,18 @@ import type { ClassInput, Style } from './types';
 export function parseInputs(
   inputs: ClassInput[],
 ): [classNames: string[], rnStyles: Style | null] {
-  let classNames: string[] = [];
+  const classNames: string[] = [];
   let styles: Style | null = null;
 
   inputs.forEach((input) => {
     if (typeof input === `string`) {
-      classNames = [...classNames, ...split(input)];
+      classNames.push(...split(input));
     } else if (Array.isArray(input)) {
-      classNames = [...classNames, ...input.flatMap(split)];
+      classNames.push(...input.flatMap(split));
     } else if (typeof input === `object` && input !== null) {
       for (const [key, value] of Object.entries(input)) {
         if (typeof value === `boolean`) {
-          classNames = [...classNames, ...(value ? split(key) : [])];
+          classNames.push(...(value ? split(key) : []));
         } else if (styles) {
           styles[key] = value;
         } else {
@@ -25,6 +25,11 @@ export function parseInputs(
   });
 
   return [classNames.filter(Boolean).filter(unique), styles];
+}
+export function parseStringInputs(
+  inputs: string[],
+): string[] {
+  return inputs.flatMap((input) => split(input)).filter(Boolean).filter(unique);
 }
 
 const WHITESPACE = /\s+/;

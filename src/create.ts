@@ -13,7 +13,7 @@ import { PREFIX_COLOR_PROP_MAP, type TwConfig } from './tw-config';
 import Cache from './cache';
 import UtilityParser from './UtilityParser';
 import { configColor, removeOpacityHelpers } from './resolve/color';
-import { parseInputs } from './parse-inputs';
+import { parseInputs, parseStringInputs } from './parse-inputs';
 import { complete, warn } from './helpers';
 
 const WHITESPACE_TEST = /\s+/;
@@ -26,6 +26,7 @@ export function create(
   device: DeviceContext = {
     platform: Platform.OS,
   },
+  customClasses: Record<string, string> = {},
 ): TailwindFn {
   const config = resolveConfig(withContent(customConfig) as any) as TwConfig;
   const customStyleUtils = getCustomFontUtils(customConfig, config);
@@ -69,11 +70,23 @@ export function create(
     cache = newCache;
   }
 
+  const expandCustomClasses = Object.keys(customClasses).length > 0 ? (parsedUtilities: string[]): string[] => {
+    return parsedUtilities.flatMap((utility) => {
+      const customClass = customClasses[utility];
+      if (customClass) {
+        return parseStringInputs([customClass]);
+      } else {
+        return [utility];
+      }
+    })
+  } : (parsedUtilities: string[]): string[] => parsedUtilities;
+
   function style(...inputs: ClassInput[]): Style {
     let resolved: Style = {};
     const dependents: DependentStyle[] = [];
     const ordered: OrderedStyle[] = [];
-    const [utilities, userStyle] = parseInputs(inputs);
+    const [parsedUtilities, userStyle] = parseInputs(inputs);
+    const utilities = expandCustomClasses(parsedUtilities);
 
     // check if we've seen this full set of classes before
     // if we have a cached copy, we can skip examining each utility
