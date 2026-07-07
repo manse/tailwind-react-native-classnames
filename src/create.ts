@@ -26,8 +26,10 @@ export function create(
   device: DeviceContext = {
     platform: Platform.OS,
   },
-  { customClasses = {} }: {
-    customClasses?: Record<string, string>
+  {
+    customClasses = {},
+  }: {
+    customClasses?: Record<string, string>;
   } = {},
 ): TailwindFn {
   const config = resolveConfig(withContent(customConfig) as any) as TwConfig;
@@ -72,16 +74,19 @@ export function create(
     cache = newCache;
   }
 
-  const expandCustomClasses = Object.keys(customClasses).length > 0 ? (parsedUtilities: string[]): string[] => {
-    return parsedUtilities.flatMap((utility) => {
-      const customClass = customClasses[utility];
-      if (customClass) {
-        return parseStringInputs([customClass]);
-      } else {
-        return [utility];
-      }
-    })
-  } : (parsedUtilities: string[]): string[] => parsedUtilities;
+  const expandCustomClasses =
+    Object.keys(customClasses).length > 0
+      ? (parsedUtilities: string[]): string[] => {
+          return parsedUtilities.flatMap((utility) => {
+            const customClass = customClasses[utility];
+            if (customClass) {
+              return parseStringInputs([customClass]);
+            } else {
+              return [utility];
+            }
+          });
+        }
+      : (parsedUtilities: string[]): string[] => parsedUtilities;
 
   function style(...inputs: ClassInput[]): Style {
     let resolved: Style = {};

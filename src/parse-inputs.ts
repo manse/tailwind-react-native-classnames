@@ -26,10 +26,11 @@ export function parseInputs(
 
   return [classNames.filter(Boolean).filter(unique), styles];
 }
-export function parseStringInputs(
-  inputs: string[],
-): string[] {
-  return inputs.flatMap((input) => split(input)).filter(Boolean).filter(unique);
+export function parseStringInputs(inputs: string[]): string[] {
+  return inputs
+    .flatMap((input) => split(input))
+    .filter(Boolean)
+    .filter(unique);
 }
 
 const WHITESPACE = /\s+/;
