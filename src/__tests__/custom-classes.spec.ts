@@ -3,7 +3,7 @@ import { create } from '../';
 
 describe(`custom classes`, () => {
   test(`tw\`btn\` evaluates exactly as tw\`px-4 py-2\``, () => {
-    const tw = create({}, undefined, { btn: `px-4 py-2` });
+    const tw = create({}, undefined, { customClasses: { btn: `px-4 py-2` } });
     expect(tw`btn`).toEqual({
       paddingLeft: 16,
       paddingRight: 16,
@@ -18,19 +18,19 @@ describe(`custom classes`, () => {
     const tw = create(
       { theme: { extend: { fontFamily: { noto: `Noto Sans` } } } },
       undefined,
-      { text: `font-noto text-lg` },
+      { customClasses: { text: `font-noto text-lg` } },
     );
     expect(tw`text`).toMatchObject({ fontFamily: `Noto Sans`, fontSize: 18 });
   });
 
   test(`a custom class can override a built-in utility`, () => {
-    const tw = create({}, undefined, { text: `pt-1` });
+    const tw = create({}, undefined, { customClasses: { text: `pt-1` } });
     // bare `text` would normally resolve to a text color; the custom class wins
     expect(tw`text`).toEqual({ paddingTop: 4 });
   });
 
   test(`custom classes combine with, and can be overridden by, other utilities`, () => {
-    const tw = create({}, undefined, { btn: `pt-1` });
+    const tw = create({}, undefined, { customClasses: { btn: `pt-1` } });
     expect(tw`btn bg-black`).toEqual({ paddingTop: 4, backgroundColor: `#000` });
     // a later utility overrides one produced by the expansion
     expect(tw`btn pt-2`).toEqual({ paddingTop: 8 });
@@ -39,7 +39,7 @@ describe(`custom classes`, () => {
   });
 
   test(`custom classes work through tw.style() inputs`, () => {
-    const tw = create({}, undefined, { btn: `pt-1` });
+    const tw = create({}, undefined, { customClasses: { btn: `pt-1` } });
     expect(tw.style(`btn`)).toEqual({ paddingTop: 4 });
     expect(tw.style([`btn`, `mt-1`])).toEqual({ paddingTop: 4, marginTop: 4 });
     expect(tw.style({ btn: true })).toEqual({ paddingTop: 4 });
@@ -49,7 +49,7 @@ describe(`custom classes`, () => {
   });
 
   test(`custom class results are cached (identical reference)`, () => {
-    const tw = create({}, undefined, { btn: `px-4 py-2` });
+    const tw = create({}, undefined, { customClasses: { btn: `px-4 py-2` } });
     expect(tw`btn`).toBe(tw`btn`);
   });
 

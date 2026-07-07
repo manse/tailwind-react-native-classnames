@@ -26,7 +26,9 @@ export function create(
   device: DeviceContext = {
     platform: Platform.OS,
   },
-  customClasses: Record<string, string> = {},
+  { customClasses = {} }: {
+    customClasses?: Record<string, string>
+  } = {},
 ): TailwindFn {
   const config = resolveConfig(withContent(customConfig) as any) as TwConfig;
   const customStyleUtils = getCustomFontUtils(customConfig, config);
