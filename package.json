@@ -1,6 +1,6 @@
 {
   "name": "@manse/twrnc",
-  "version": "4.16.7",
+  "version": "4.16.8",
   "description": "simple, expressive API for tailwindcss + react-native",
   "author": "Jared Henderson <jared@netrivet.com>",
   "module": "dist/esm/index.js",

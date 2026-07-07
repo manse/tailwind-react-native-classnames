@@ -6,6 +6,14 @@ on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project ad
 
 [comment]: # 'Section Titles: Added/Fixed/Changed/Removed'
 
+## [4.16.8] - 2026-07-07
+
+`e3e67f5` - `7136af9`
+
+### Added
+
+- Add optional third `customClasses` argument to `create()` for defining named shortcuts
+
 ## [4.16.7] - 2026-05-20
 
 `9bca3d6`
