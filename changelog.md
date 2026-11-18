@@ -8,6 +8,8 @@ on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project ad
 
 ## [4.16.10] - 2026-11-18
 
+`b176968`
+
 ### Added
 
 - Add `curve-continuous` and `curve-circular` utilities for React Native's iOS-only
