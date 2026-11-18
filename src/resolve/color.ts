@@ -7,7 +7,7 @@ const NAMED_COLOR = /^[a-z]{3,}$/;
 const RGB_PREFIX = /^rgb\(/;
 const HSL_PREFIX = /^hsl\(/;
 const TRAILING_PAREN = /\)$/;
-const OPACITY_VALUE = / ?\d*\.?(\d+)\)$/;
+const OPACITY_VALUE = / ?(\d*\.?\d+)\)$/;
 
 export function color(
   type: ColorStyleType,
@@ -86,13 +86,17 @@ function addOpacity(color: string, opacity: number): string {
     color = hexToRgba(color);
   } else if (color.startsWith(`rgb(`) || color.startsWith(`hsl(`)) {
     color = color.replace(RGB_PREFIX, `rgba(`).replace(HSL_PREFIX, `hsla(`);
-    if (color.includes(`,`)) {
-      color = color.replace(TRAILING_PAREN, `, 1)`);
-    } else {
-      color = color.replace(TRAILING_PAREN, ` / 1)`);
+    // `rgb(1 2 3 / 0.5)` already has an alpha
+    if (!color.includes(`/`)) {
+      color = color.replace(TRAILING_PAREN, color.includes(`,`) ? `, 1)` : ` / 1)`);
     }
   }
-  return color.replace(OPACITY_VALUE, ` ${opacity})`);
+  // multiply existing alpha: `rgba(0, 0, 0, 0.5)` at 80% => 0.4
+  // rounded to drop float noise (0.75 * 0.8 = 0.6000000000000001)
+  return color.replace(
+    OPACITY_VALUE,
+    (_, alpha) => ` ${Math.round(Number(alpha) * opacity * 10000) / 10000})`,
+  );
 }
 
 export function removeOpacityHelpers(style: Style): void {
@@ -119,7 +123,10 @@ const STYLE_PROPS = {
 
 function hexToRgba(hex: string): string {
   const orig = hex;
-  hex = hex.replace(MATCH_SHORT_HEX, (_, r, g, b) => r + r + g + g + b + b);
+  hex = hex.replace(
+    MATCH_SHORT_HEX,
+    (_, r, g, b, a = ``) => r + r + g + g + b + b + a + a,
+  );
   const result = MATCH_FULL_HEX.exec(hex);
   if (!result) {
     warn(`invalid config hex color value: ${orig}`);
@@ -129,7 +136,8 @@ function hexToRgba(hex: string): string {
   const r = parseInt(result[1] ?? ``, 16);
   const g = parseInt(result[2] ?? ``, 16);
   const b = parseInt(result[3] ?? ``, 16);
-  return `rgba(${r}, ${g}, ${b}, 1)`;
+  const a = result[4] ? parseInt(result[4], 16) / 255 : 1;
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
 
 export function configColor(colorName: string, config: TwColors): string | null {
@@ -157,5 +165,5 @@ export function configColor(colorName: string, config: TwColors): string | null 
   return null;
 }
 
-const MATCH_SHORT_HEX = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-const MATCH_FULL_HEX = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
+const MATCH_SHORT_HEX = /^#?([a-f\d])([a-f\d])([a-f\d])([a-f\d])?$/i;
+const MATCH_FULL_HEX = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})?$/i;

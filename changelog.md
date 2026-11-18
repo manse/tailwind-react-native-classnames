@@ -6,6 +6,23 @@ on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project ad
 
 [comment]: # 'Section Titles: Added/Fixed/Changed/Removed'
 
+## [4.16.9] - 2026-11-13
+
+### Added
+
+- Support alpha in 4- and 8-digit hex colors (`#RGBA`, `#RRGGBBAA`) when an opacity is
+  applied, e.g. `bg-[#00000080]/50`.
+
+### Changed
+
+- Opacity utilities now multiply a color's existing alpha instead of replacing it, e.g. a
+  `rgba(0, 0, 0, 0.5)` color with `/80` becomes `rgba(0, 0, 0, 0.4)`.
+
+### Fixed
+
+- Applying an opacity to an `rgb()` / `hsl()` color that already has a slash alpha (e.g.
+  `rgb(1 2 3 / 0.5)`) no longer produces an invalid color.
+
 ## [4.16.8] - 2026-07-07
 
 `e3e67f5` - `7136af9`

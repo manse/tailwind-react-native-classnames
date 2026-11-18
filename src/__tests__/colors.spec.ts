@@ -88,9 +88,10 @@ describe(`colors`, () => {
       color: `rgba(1, 2, 3, 0.75)`,
     });
 
+    // an existing alpha is multiplied: 0.5 * 0.75
     expect(tw`text-foo/50 bg-bar/75`).toEqual({
       color: `rgba(1, 2, 3, 0.5)`,
-      backgroundColor: `rgba(4, 5, 6, 0.75)`,
+      backgroundColor: `rgba(4, 5, 6, 0.375)`,
     });
 
     expect(tw`text-fizz bg-buzz`).toEqual({
@@ -104,7 +105,7 @@ describe(`colors`, () => {
 
     expect(tw`text-fizz/50 bg-buzz/75`).toEqual({
       color: `rgba(7 8 9 / 0.5)`,
-      backgroundColor: `rgba(10 11 12 / 0.75)`,
+      backgroundColor: `rgba(10 11 12 / 0.45)`,
     });
   });
 
@@ -131,7 +132,7 @@ describe(`colors`, () => {
 
     expect(tw`text-foo/50 bg-bar/75`).toEqual({
       color: `hsla(1, 2%, 3%, 0.5)`,
-      backgroundColor: `hsla(4, 5%, 6%, 0.75)`,
+      backgroundColor: `hsla(4, 5%, 6%, 0.375)`,
     });
 
     expect(tw`text-fizz bg-buzz`).toEqual({
@@ -145,7 +146,7 @@ describe(`colors`, () => {
 
     expect(tw`text-fizz/50 bg-buzz/75`).toEqual({
       color: `hsla(7 8% 9% / 0.5)`,
-      backgroundColor: `hsla(10 11% 12% / 0.75)`,
+      backgroundColor: `hsla(10 11% 12% / 0.45)`,
     });
   });
 
@@ -173,11 +174,33 @@ describe(`colors`, () => {
       backgroundColor: `rgba(0, 17, 34, 0.5)`,
     });
     expect(tw`bg-[rgba(3,4,5,0.1)] bg-opacity-50`).toEqual({
-      backgroundColor: `rgba(3,4,5, 0.5)`,
+      backgroundColor: `rgba(3,4,5, 0.05)`,
     });
     expect(tw`bg-[hsla(6,7%,8%,0.2)] bg-opacity-50`).toEqual({
-      backgroundColor: `hsla(6,7%,8%, 0.5)`,
+      backgroundColor: `hsla(6,7%,8%, 0.1)`,
     });
+  });
+
+  test(`opacity on colors that already have an alpha`, () => {
+    // #RGBA / #RRGGBBAA: the hex alpha is kept and multiplied (0x80 / 255 * 0.5)
+    expect(tw`bg-[#00000080]`).toEqual({ backgroundColor: `#00000080` });
+    expect(tw`bg-[#00000080]/50`).toEqual({ backgroundColor: `rgba(0, 0, 0, 0.251)` });
+    expect(tw`bg-[#00000080] bg-opacity-50`).toEqual({
+      backgroundColor: `rgba(0, 0, 0, 0.251)`,
+    });
+    expect(tw`bg-[#f008]/50`).toEqual({ backgroundColor: `rgba(255, 0, 0, 0.2667)` });
+
+    // float noise is rounded away: 0.75 * 0.8
+    expect(tw`bg-[rgba(0,0,0,0.75)]/80`).toEqual({ backgroundColor: `rgba(0,0,0, 0.6)` });
+
+    // `rgb()` / `hsl()` with a slash alpha don't get a second alpha
+    tw = create({
+      theme: {
+        colors: { foo: `rgb(10 11 12 / 0.6)`, bar: `hsl(10 11% 12% / 0.6)` },
+      },
+    });
+    expect(tw`bg-foo/75`).toEqual({ backgroundColor: `rgba(10 11 12 / 0.45)` });
+    expect(tw`bg-bar/75`).toEqual({ backgroundColor: `hsla(10 11% 12% / 0.45)` });
   });
 
   test(`non-group dashed custom colors`, () => {
