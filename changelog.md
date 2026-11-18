@@ -8,6 +8,8 @@ on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project ad
 
 ## [4.16.9] - 2026-11-13
 
+`5e9fc93`
+
 ### Added
 
 - Support alpha in 4- and 8-digit hex colors (`#RGBA`, `#RRGGBBAA`) when an opacity is
