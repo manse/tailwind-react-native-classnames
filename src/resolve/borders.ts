@@ -1,9 +1,10 @@
 import type { TwTheme } from '../tw-config';
-import type { ColorStyleType, Direction, StyleIR } from '../types';
+import type { ColorStyleType, Direction, Style, StyleIR } from '../types';
 import {
   parseAndConsumeDirection,
   complete,
   getCompleteStyle,
+  parseStyleVal,
   unconfiggedStyle,
 } from '../helpers';
 import { color } from './color';
@@ -142,6 +143,44 @@ export function borderRadius(
   }
 
   return expand(arbitrary);
+}
+
+const RADIUS_PROPS = [
+  `borderRadius`,
+  `borderTopLeftRadius`,
+  `borderTopRightRadius`,
+  `borderBottomRightRadius`,
+  `borderBottomLeftRadius`,
+];
+
+// radius at or above which a corner counts as `rounded-full` (circle/pill intent)
+export function getFullRadius(config?: TwTheme['borderRadius']): number {
+  const full = parseStyleVal(config?.full);
+  return typeof full === `number` && full > 0 ? full : 9999;
+}
+
+// RN accepts a single `borderCurve` per view, so all radii decide together:
+// any `full` radius -> `circular`, otherwise any non-zero radius -> `continuous`.
+// A `borderCurve` already present came from an explicit `curve-*` utility, and wins.
+export function applyAutoBorderCurve(style: Style, fullRadius: number): void {
+  if (style.borderCurve !== undefined) {
+    return;
+  }
+  let rounded = false;
+  for (const prop of RADIUS_PROPS) {
+    const radius = style[prop];
+    if (typeof radius !== `number` || radius <= 0) {
+      continue;
+    }
+    if (radius >= fullRadius) {
+      style.borderCurve = `circular`;
+      return;
+    }
+    rounded = true;
+  }
+  if (rounded) {
+    style.borderCurve = `continuous`;
+  }
 }
 
 // RN only supports `borderRadius` + `border(top|bottom)(left|right)Radius`

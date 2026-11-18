@@ -13,6 +13,7 @@ import { PREFIX_COLOR_PROP_MAP, type TwConfig } from './tw-config';
 import Cache from './cache';
 import UtilityParser from './UtilityParser';
 import { configColor, removeOpacityHelpers } from './resolve/color';
+import { applyAutoBorderCurve, getFullRadius } from './resolve/borders';
 import { parseInputs, parseStringInputs } from './parse-inputs';
 import { complete, warn } from './helpers';
 
@@ -28,12 +29,15 @@ export function create(
   },
   {
     customClasses = {},
+    autoBorderCurve = false,
   }: {
     customClasses?: Record<string, string>;
+    autoBorderCurve?: boolean;
   } = {},
 ): TailwindFn {
   const config = resolveConfig(withContent(customConfig) as any) as TwConfig;
   const customStyleUtils = getCustomFontUtils(customConfig, config);
+  const fullRadius = getFullRadius(config.theme?.borderRadius);
 
   function deriveCacheGroup(): string {
     return (
@@ -149,6 +153,11 @@ export function create(
         }
       }
       removeOpacityHelpers(resolved);
+    }
+
+    // decided on the fully merged style, so class order doesn't matter
+    if (autoBorderCurve) {
+      applyAutoBorderCurve(resolved, fullRadius);
     }
 
     // cache the full set of classes for future re-renders

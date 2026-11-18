@@ -19,6 +19,7 @@
 - 🚨 borderBottomStartRadius
 - ✅ borderBottomWidth
 - ✅ borderColor
+- ✅ borderCurve
 - 🚨 borderEndColor
 - 🚨 borderEndWidth
 - ✅ borderLeftColor

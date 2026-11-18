@@ -419,6 +419,39 @@ to web-css, including:
 - `include-font-padding` and `remove-font-padding` (Android only: `includeFontPadding`)
 - image tint color control (`tint-{color}` e.g. `tint-red-200`)
 - `pointer-events-(box-only|box-none)`
+- `curve-continuous` and `curve-circular` (iOS only: `borderCurve`, see
+  [below](#automatic-border-curve))
+
+## Automatic Border Curve
+
+Pass `autoBorderCurve: true` to `create()` to add `borderCurve` (iOS) to every style that
+has a border radius, so you don't have to write `curve-continuous` next to each
+`rounded-*`:
+
+```js
+const tw = create(require(`../../tailwind.config.js`), undefined, {
+  autoBorderCurve: true,
+});
+
+tw`rounded-lg`; // -> { borderRadius: 8, borderCurve: 'continuous' }
+tw`rounded-full`; // -> { borderRadius: 9999, borderCurve: 'circular' }
+```
+
+React Native applies one `borderCurve` per view, so the value is chosen from all the
+resulting radii:
+
+- if any radius is `full` (at or above the theme's `borderRadius.full`, `9999px` by
+  default), the curve is `circular`, so circles and pills stay exact;
+- otherwise, if any radius is non-zero, the curve is `continuous`;
+- an explicit `curve-continuous` / `curve-circular` always wins, wherever it appears.
+
+For example, `rounded-t-lg rounded-b-full` gets `circular`. On iOS, React Native only
+honors `borderCurve` when all four radii are equal; with mixed radii it draws circular
+corners anyway, so `circular` also matches what is rendered.
+
+Size-dependent circles (e.g. `rounded-[20px]` on a 40×40 view) can't be detected, so add
+`curve-circular` to those. Only `rounded-*` utilities are inspected. A `borderRadius`
+passed in a raw style object to `tw.style()` doesn't change the curve.
 
 ## JIT-Style Arbitrary Values
 

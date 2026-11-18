@@ -6,6 +6,17 @@ on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project ad
 
 [comment]: # 'Section Titles: Added/Fixed/Changed/Removed'
 
+## [4.16.10] - 2026-11-18
+
+### Added
+
+- Add `curve-continuous` and `curve-circular` utilities for React Native's iOS-only
+  `borderCurve` style.
+- Add optional `autoBorderCurve` option to `create()` that adds `borderCurve` to every
+  style with a border radius: `continuous`, or `circular` when any radius reaches the
+  theme's `borderRadius.full` (`rounded-full`), so circles and pills stay exact. An
+  explicit `curve-*` utility always takes precedence.
+
 ## [4.16.9] - 2026-11-13
 
 `5e9fc93`
